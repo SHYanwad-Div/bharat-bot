@@ -10,6 +10,11 @@ and cut into an explainer film with Remotion.
 problem, the three failures, the 200-street results, the safety rule, the cost and the limits on one page, with the film
 embedded.
 
+**3D digital twin:** <https://shyanwad-div.github.io/bharat-bot/twin/> (source: [`docs/twin/`](docs/twin/)): the same
+street and the same runs in the browser. Pick the full delivery or one test (potholes, dogs, theft), switch between the
+standard robot and Bharat-Bot, watch the control room log every SENSE → AI → SAFETY → ACT decision, scrub through time,
+and click the robot to take it apart into labelled parts. three.js, no build step, about 5 MB.
+
 ## Outputs
 
 The videos and Blender files are too big for git. The MP4s go in the GitHub Release (tag `v1.0`) instead; `blend/`,
@@ -44,8 +49,14 @@ sim/evaluate.py      batch evaluation: 200 seeded random streets per scenario (s
                      plus a steel-manned baseline, 95 % CIs and a one-feature-at-a-time ablation → research/evaluation.md
                      and video/src/data/evaluation.json; sim/test_seeded.py checks the film's runs stay byte-identical
 sim/screen_record.py records Blender's own window playing the sim (needs an unlocked screen for --mode desktop)
+sim/export_twin.py   every agent's pose on every frame of the 4 film runs (+ the standard robot on the full route), the
+                     same event log as the film HUD, the street's potholes → docs/twin/data; web-size textures
+sim/export_twin_models.py   Blender script: the film's street, robots (Bharat-Bot split into labelled parts), people
+                     and auto-rickshaw as Draco GLBs, the Quaternius animals trimmed to the clips used, the sky → docs/twin/models
 video/               Remotion project: src/bharat/* is the film (HUD, failure overlays, scenes); scripts/make_audio.py
                      synthesises the tanpura-drone music and sound effects
+docs/twin/           the digital twin: js/terrain.js rebuilds the road surface with world.py's own arithmetic (checked
+                     against Python on load), js/actors.js poses everything the way build_scene.py keys it in Blender
 ```
 
 ## Re-run everything
@@ -59,6 +70,9 @@ python sim/export_telemetry.py                               # HUD data for the 
 python sim/evaluate.py                                       # 200 random streets per scenario and robot (≈5 min)
 python video/scripts/make_audio.py                           # music + sound effects -> video/public/audio
 cd video; npm install; npx remotion render BharatBotFilm ../videos/bharat_bot_film.mp4   # the film (≈10 min)
+python sim/export_twin.py                                    # 3D twin: poses, events, street, textures (≈20 s)
+& $B -b --factory-startup --python sim/export_twin_models.py # 3D twin: models and sky (≈20 s)
+python -m http.server 8765 --directory docs                  # then open http://localhost:8765/twin/
 ```
 
 The film reads the five clips from `video/public/clips/`: `render_queue.ps1` copies them there, or download them from
@@ -80,8 +94,9 @@ doesn't use them. No sidewalk robot publishes a wading depth. Costs are paper es
 
 ## Credits
 
-Textures: Poly Haven (CC0). Dogs and cow: Quaternius via Poly Pizza (CC0). Everything else is procedural. Authors and
-licences of every asset used: `assets/CREDITS.md`.
+Textures and sky: Poly Haven (CC0). Dogs and cow: Quaternius via Poly Pizza (CC0). Everything else is procedural. Authors
+and licences of every asset used: `assets/CREDITS.md`; the twin ships web-size copies of the CC0 files in
+`docs/twin/models/` and loads [three.js](https://threejs.org) (MIT) from jsDelivr.
 Inspired by [GH-01](https://github.com/sumithshridhar/gh01-twin), Sumith Shridhar's greenhouse digital twin.
 
 ## Licence

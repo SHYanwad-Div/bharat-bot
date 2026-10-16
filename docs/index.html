@@ -110,6 +110,16 @@ figure { margin: 0; }
 .shot { border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: #000; aspect-ratio: 16 / 9; }
 .shot img { width: 100%; height: 100%; object-fit: cover; }
 
+/* ---------- 3D twin ---------- */
+.twin { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(20px, 4vw, 44px); align-items: center; }
+.twin-list { margin: 20px 0 0; padding-left: 20px; color: var(--text-2); }
+.twin-list li { margin: 6px 0; }
+.twin-list b { color: var(--text); }
+.twin-shot { display: block; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #000; aspect-ratio: 16 / 9; }
+.twin-shot img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+.twin-shot:hover img { transform: scale(1.02); }
+@media (max-width: 860px) { .twin { grid-template-columns: 1fr; } }
+
 /* ---------- watch ---------- */
 .players { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; margin-top: 30px; align-items: start; }
 .player video { width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 10px; border: 1px solid var(--line); }
@@ -258,7 +268,7 @@ details.table-view summary { cursor: pointer; color: var(--text-2); font-size: 1
 .next p { margin: 8px 0 0; font: 600 clamp(18px, 2.3vw, 22px)/1.35 var(--sans); }
 
 /* ---------- build ---------- */
-.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 30px; counter-reset: step; }
+.steps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 30px; counter-reset: step; }
 .step { padding: 20px 22px; }
 .step .n { font: 700 13px/1 var(--mono); color: var(--saffron); }
 .step h3 { margin: 8px 0 10px; }
@@ -285,6 +295,7 @@ footer p { margin: 4px 0; max-width: none; }
 <header class="hero" id="top">
   <nav class="wrap nav" aria-label="Sections">
     <a class="mark" href="#top">Bharat-Bot</a>
+    <a href="twin/">3D twin</a>
     <a href="#watch">Film</a>
     <a href="#tests">Tests</a>
     <a href="#results">Results</a>
@@ -307,7 +318,8 @@ footer p { margin: 4px 0; max-width: none; }
       <li>66 research sources</li>
     </ul>
     <div class="ctas">
-      <a class="btn primary" href="#watch">&#9654; Watch the film</a>
+      <a class="btn primary" href="twin/">&#9654; Try the 3D twin</a>
+      <a class="btn" href="#watch">Watch the film</a>
       <a class="btn" href="#results">See the results</a>
       <a class="btn" href="https://github.com/SHYanwad-Div/bharat-bot">Code on GitHub</a>
     </div>
@@ -315,6 +327,27 @@ footer p { margin: 4px 0; max-width: none; }
 </header>
 
 <main id="main">
+
+<section id="twin">
+  <div class="wrap twin">
+    <div>
+      <p class="kicker">Digital twin</p>
+      <h2>Drive it yourself, in 3D</h2>
+      <p class="lede">The whole simulation runs in your browser: the same street, the same dogs, cow, auto-rickshaw and thief,
+        moved frame by frame by the Python simulation. Pick a test, switch between the standard robot and Bharat-Bot, and
+        watch the control room decide.</p>
+      <ul class="twin-list">
+        <li><b>Four tests:</b> the full delivery, potholes, street dogs, theft</li>
+        <li><b>US robot vs Bharat-Bot</b> on the same street</li>
+        <li><b>Control room:</b> every decision as SENSE → AI → SAFETY → ACT</li>
+        <li><b>Click the robot</b> to take it apart into labelled parts</li>
+      </ul>
+      <div class="ctas"><a class="btn primary" href="twin/">&#9654; Open the 3D twin</a></div>
+      <p class="small muted">About 5 MB. Works on a laptop or a phone with a recent browser.</p>
+    </div>
+    <a class="twin-shot" href="twin/"><img src="img/twin.jpg" alt="The 3D twin: Bharat-Bot stopped for street dogs, with detection boxes, the control-room log and the speed panel" width="800" height="450" loading="lazy"></a>
+  </div>
+</section>
 
 <section id="watch">
   <div class="wrap">
@@ -806,6 +839,13 @@ footer p { margin: 4px 0; max-width: none; }
         <p>React composes the film: the control-room HUD is drawn from per-frame telemetry, the results from
           <code>evaluation.json</code>, and the tanpura-drone music is synthesised in Python.</p>
       </div>
+      <div class="card step">
+        <div class="n">04 · docs/twin/</div>
+        <h3>Replay it in 3D</h3>
+        <p>The <a href="twin/">digital twin</a> is three.js with no build step. <code>sim/export_twin.py</code> writes every
+          agent's pose on every frame, <code>sim/export_twin_models.py</code> exports the Blender models, and the browser
+          rebuilds the road surface from the simulator's own terrain function.</p>
+      </div>
     </div>
 <pre class="cmd"><code><span class="c"># the four simulations, with their event logs (about 25 s)</span>
 python sim/simulate.py all
@@ -828,14 +868,15 @@ python sim/simulate.py bharat_full --seed 7 --robot baseline</code></pre>
     <h2>Assets, tools and inspiration</h2>
     <ul class="credits">
       <li><b>Textures:</b> <a href="https://polyhaven.com">Poly Haven</a> (CC0). Asphalt 02 and Red Dirt Mud 01 by Rob
-        Tuytel, Road Damaged 2 by Dimitrios Savva, Red Laterite Soil Stones and Painted Plaster Wall by Amal Kumar.</li>
+        Tuytel, Road Damaged 2 by Dimitrios Savva, Red Laterite Soil Stones and Painted Plaster Wall by Amal Kumar. Sky:
+        Kloofendal 43d Clear Pure Sky by Greg Zaal.</li>
       <li><b>Dogs and cow:</b> <a href="https://quaternius.com">Quaternius</a> via <a href="https://poly.pizza">poly.pizza</a>
         (CC0): Husky, Shiba Inu, Cow.</li>
       <li><b>Everything else</b> on screen (both robots, people, auto-rickshaw, shops, poles and wires) is procedural.</li>
       <li><b>Music and sound effects:</b> synthesised in Python (<code>video/scripts/make_audio.py</code>).</li>
       <li><b>Fonts:</b> Rajdhani and JetBrains Mono (SIL Open Font License).</li>
-      <li><b>Built with</b> Python, <a href="https://www.blender.org">Blender 5.2</a>, <a href="https://www.remotion.dev">Remotion</a>
-        and Claude Code.</li>
+      <li><b>Built with</b> Python, <a href="https://www.blender.org">Blender 5.2</a>, <a href="https://www.remotion.dev">Remotion</a>,
+        <a href="https://threejs.org">three.js</a> (MIT, for the 3D twin) and Claude Code.</li>
       <li><b>Inspired by</b> <a href="https://github.com/sumithshridhar/gh01-twin">GH-01</a>, Sumith Shridhar's greenhouse
         digital twin, and its rule: AI suggests, safety decides, hardware protects.</li>
       <li><b>Licence:</b> the code is <a href="https://github.com/SHYanwad-Div/bharat-bot/blob/main/LICENSE">MIT</a>; the

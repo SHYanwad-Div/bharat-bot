@@ -1,0 +1,401 @@
+<!doctype html>
+<!--
+  Bharat-Bot digital twin: the simulation in 3D in the browser. Static ES modules, no build step; three.js comes from
+  the jsDelivr CDN through the import map. Data: docs/twin/data (sim/export_twin.py), models: docs/twin/models
+  (sim/export_twin_models.py). Inspired by GH-01, Sumith Shridhar's greenhouse twin.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bharat-Bot · digital twin</title>
+<meta name="description" content="Drive the Bharat-Bot simulation in 3D: potholes, street dogs, a cow, an auto-rickshaw and a thief on an Indian street. Compare a standard US-style sidewalk robot with Bharat-Bot, watch every decision in the control room, and click the robot to take it apart.">
+<meta name="theme-color" content="#0b1220">
+<meta property="og:title" content="Bharat-Bot · digital twin">
+<meta property="og:description" content="The Bharat-Bot street simulation in 3D: run the pothole, dog and theft tests with a standard robot or Bharat-Bot and watch the control room decide.">
+<meta property="og:image" content="https://shyanwad-div.github.io/bharat-bot/img/og.jpg">
+<meta property="og:url" content="https://shyanwad-div.github.io/bharat-bot/twin/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b1220'/%3E%3Cpath d='M6 9h20v9H6z' fill='%23ff9933'/%3E%3Cpath d='M6 18h20v3a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z' fill='%232ecc71'/%3E%3Ccircle cx='10' cy='25' r='3' fill='%23f5f7fa'/%3E%3Ccircle cx='22' cy='25' r='3' fill='%23f5f7fa'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@600;700&display=swap">
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0b1220;
+  --hud: rgba(9, 15, 28, 0.80);
+  --hud2: rgba(12, 19, 34, 0.94);
+  --line: rgba(255, 255, 255, 0.12);
+  --line2: rgba(255, 255, 255, 0.22);
+  --text: #f5f7fa;
+  --text-2: #c6cfdd;
+  --muted: #93a1b8;
+  --saffron: #ff9933;
+  --green: #2ecc71;
+  --amber: #f5b301;
+  --red: #ef4444;
+  --blue: #38bdf8;
+  --violet: #a78bfa;
+  --display: "Rajdhani", "Arial Narrow", system-ui, sans-serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 var(--sans); overflow: hidden;
+  -webkit-text-size-adjust: 100%; }
+button { font: inherit; color: inherit; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--saffron); outline-offset: 2px; }
+a { color: var(--saffron); }
+#app { position: fixed; inset: 0; }
+#c { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+#tags, #labels, #leaders { position: absolute; inset: 0; pointer-events: none; }
+#leaders { width: 100%; height: 100%; }
+.hud { position: absolute; background: var(--hud); border: 1px solid var(--line); border-radius: 12px;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 2; }
+.k { font: 700 11.5px/1 var(--display); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin: 0; }
+
+/* top bar */
+.top { top: calc(10px + var(--safe-t)); left: 10px; display: flex; align-items: center; gap: 12px; padding: 8px 12px; }
+.brand { display: flex; align-items: center; gap: 9px; white-space: nowrap; text-decoration: none; color: var(--text); }
+.brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--red); animation: rec 1.4s ease-in-out infinite; }
+.brand b { font: 700 21px/1 var(--display); letter-spacing: 0.06em; }
+.brand b .g { color: var(--green); } .brand b .s { color: var(--saffron); }
+.brand .sub { font: 600 13px/1 var(--display); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+@keyframes rec { 50% { opacity: 0.35; } }
+.clock { font: 700 15px/1 var(--mono); color: var(--saffron); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.chip { font: 600 12px/1 var(--mono); padding: 6px 9px; border-radius: 6px; background: rgba(255, 255, 255, 0.06); white-space: nowrap; }
+.topright { top: calc(10px + var(--safe-t)); right: 10px; display: flex; gap: 6px; padding: 6px; }
+.btn { border: 1px solid var(--line2); background: rgba(255, 255, 255, 0.05); border-radius: 7px; padding: 7px 10px; cursor: pointer;
+  font: 600 12.5px/1 var(--sans); white-space: nowrap; text-decoration: none; color: var(--text); display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover { border-color: var(--saffron); }
+.btn[aria-pressed="true"] { background: var(--text); color: #0b1220; border-color: var(--text); }
+
+/* decision chain + caption */
+.chain { position: absolute; left: 50%; transform: translateX(-50%); top: calc(12px + var(--safe-t)); display: flex; align-items: center;
+  gap: 5px; z-index: 2; pointer-events: none; }
+.chain span { font: 700 13px/1 var(--display); letter-spacing: 0.12em; padding: 8px 11px; border-radius: 7px; background: rgba(9, 15, 28, 0.78);
+  color: var(--muted); border: 1px solid var(--line); transition: background 0.25s, color 0.25s, box-shadow 0.25s; }
+.chain i { color: var(--muted); font-style: normal; }
+.chain span.on { color: #08101c; }
+#caption { position: absolute; left: 274px; right: 382px; margin: 0 auto; width: fit-content; top: calc(60px + var(--safe-t)); z-index: 2;
+  max-width: 680px; padding: 10px 16px 10px 14px; border-left: 4px solid var(--saffron); font: 600 19px/1.25 var(--display);
+  letter-spacing: 0.01em; text-wrap: balance; transition: opacity 0.35s; pointer-events: none; }
+#caption.fade { opacity: 0; }
+
+/* left: tests, robot, camera */
+.scen { left: 10px; top: calc(68px + var(--safe-t)); width: 252px; padding: 12px; display: grid; gap: 12px; }
+.scen .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.scen .grid button { text-align: left; border: 1px solid var(--line2); background: rgba(255, 255, 255, 0.04); border-radius: 8px;
+  padding: 8px 9px; cursor: pointer; font: 600 13px/1.15 var(--sans); }
+.scen .grid button small { display: block; font: 500 11px/1.3 var(--sans); color: var(--muted); margin-top: 2px; }
+.scen .grid button.wide { grid-column: 1 / -1; }
+.scen .grid button:hover { border-color: var(--saffron); }
+.scen .grid button[aria-pressed="true"] { background: rgba(255, 153, 51, 0.18); border-color: var(--saffron); }
+.seg { display: grid; grid-template-columns: 1fr 1fr; padding: 3px; gap: 3px; border-radius: 9px; background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line); }
+.seg button { border: 0; background: transparent; border-radius: 7px; padding: 8px 6px; cursor: pointer; font: 700 13px/1.1 var(--sans);
+  color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--text); color: #0b1220; }
+.seg button[data-robot="baseline"][aria-pressed="true"] { background: #3987e5; color: #fff; }
+.seg button[data-robot="bharat"][aria-pressed="true"] { background: var(--saffron); color: #1a1004; }
+.cams { display: flex; flex-wrap: wrap; gap: 5px; }
+.cams .btn { padding: 6px 8px; font-size: 12px; }
+.note { font-size: 12px; color: var(--muted); margin: 0; }
+
+/* right: control room */
+.feed { right: 10px; top: calc(62px + var(--safe-t)); width: 360px; max-height: calc(100% - 300px); display: grid;
+  grid-template-rows: auto 1fr; padding: 12px 10px 6px 12px; gap: 8px; }
+.feed .sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+#log { list-style: none; margin: 0; padding: 0 2px 0 0; overflow: auto; display: grid; gap: 4px; align-content: start; scrollbar-width: thin; }
+#log li { display: grid; grid-template-columns: 44px 58px 1fr; gap: 6px; padding: 6px 6px; border-radius: 7px; background: rgba(255, 255, 255, 0.035);
+  animation: in 0.35s ease-out; }
+#log li time { font: 500 11.5px/1.3 var(--mono); color: var(--muted); }
+#log li b { font: 700 11px/1.35 var(--mono); letter-spacing: 0.04em; }
+#log li p { margin: 0; font: 600 13px/1.25 var(--sans); }
+#log li p small { display: block; font-weight: 400; font-size: 12px; color: var(--muted); margin-top: 1px; }
+#log li.ALARM { background: rgba(239, 68, 68, 0.17); }
+#log li.empty { display: block; color: var(--muted); font-size: 12.5px; background: none; }
+@keyframes in { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* bottom-left: speed + state */
+.speed { left: 10px; bottom: calc(10px + var(--safe-b)); width: 300px; padding: 10px 12px; display: grid; grid-template-columns: 96px 1fr;
+  gap: 4px 12px; align-items: center; }
+.speed svg { width: 96px; height: 96px; grid-row: 1 / 3; }
+.speed .state { font: 700 25px/1.02 var(--display); letter-spacing: 0.02em; }
+.speed .facts { display: flex; flex-wrap: wrap; gap: 4px 12px; font: 500 12px/1.3 var(--mono); color: var(--muted); }
+.speed .facts b { color: var(--text); font-weight: 700; }
+
+/* bottom-centre: route strip + playback */
+.bottom { left: 322px; right: 382px; bottom: calc(10px + var(--safe-b)); padding: 8px 12px 10px; display: grid; gap: 6px; min-width: 0; }
+#route { width: 100%; height: 64px; display: block; }
+.play { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.play .btn { padding: 7px 9px; }
+#playbtn { width: 38px; justify-content: center; font-size: 14px; }
+.scrub { position: relative; flex: 1; min-width: 80px; height: 26px; display: flex; align-items: center; }
+#scrub { width: 100%; margin: 0; accent-color: var(--saffron); cursor: pointer; }
+#ticks { position: absolute; left: 0; right: 0; top: 0; height: 6px; pointer-events: none; }
+#ticks i { position: absolute; top: 0; width: 2px; height: 6px; border-radius: 1px; transform: translateX(-1px); }
+.time { font: 600 12px/1 var(--mono); color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* 3D-anchored tags (detections) and explode labels */
+.tag { position: absolute; left: 0; top: 0; transform: translate(-50%, -100%); font: 700 11px/1 var(--mono); letter-spacing: 0.04em; padding: 3px 6px;
+  border-radius: 4px; color: #08101c; white-space: nowrap; }
+.plab { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 6px; padding: 4px 9px 4px 4px; border-radius: 999px;
+  background: rgba(9, 15, 28, 0.9); border: 1px solid var(--line2); font: 600 12.5px/1 var(--sans); white-space: nowrap;
+  transform: translate(-50%, -50%) scale(0.6); opacity: 0; transition: opacity 0.3s, transform 0.35s cubic-bezier(0.2, 1.6, 0.4, 1);
+  pointer-events: auto; cursor: pointer; }
+.plab.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.plab i { font: 700 11px/20px var(--mono); font-style: normal; width: 20px; height: 20px; border-radius: 50%; text-align: center;
+  background: var(--saffron); color: #1a1004; }
+.plab.hl { border-color: var(--saffron); background: rgba(48, 30, 8, 0.95); }
+#leaders line { stroke: rgba(255, 153, 51, 0.8); stroke-width: 1.2; }
+#leaders circle { fill: var(--saffron); }
+
+/* explode panel */
+.panel { position: absolute; top: calc(10px + var(--safe-t)); right: 10px; bottom: calc(10px + var(--safe-b)); width: min(400px, 40vw);
+  background: var(--hud2); border: 1px solid var(--line2); border-radius: 14px; display: grid; grid-template-rows: auto 1fr;
+  overflow: hidden; z-index: 3; animation: slide 0.45s cubic-bezier(0.2, 0.9, 0.2, 1); }
+@keyframes slide { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+.p-head { padding: 14px 16px 10px; display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; border-bottom: 1px solid var(--line); }
+.p-head h2 { margin: 0; font: 700 28px/1 var(--display); grid-column: 1; }
+.p-head p { margin: 2px 0 0; grid-column: 1 / -1; color: var(--text-2); font-size: 13.5px; }
+.p-head .btn { grid-row: 1; grid-column: 2; }
+#parts { list-style: none; margin: 0; padding: 10px 10px 16px; overflow: auto; display: grid; gap: 4px; align-content: start; }
+#parts li { display: grid; grid-template-columns: 26px 1fr; gap: 8px; padding: 8px; border-radius: 8px; cursor: pointer; }
+#parts li:hover, #parts li.hl { background: rgba(255, 153, 51, 0.12); }
+#parts li i { font: 700 11px/22px var(--mono); font-style: normal; width: 22px; height: 22px; border-radius: 50%; text-align: center;
+  background: var(--saffron); color: #1a1004; }
+#parts li b { font-size: 14px; }
+#parts li small { display: block; color: var(--text-2); font-size: 12.5px; line-height: 1.45; margin-top: 2px; }
+#parts li.vs { cursor: default; grid-template-columns: 1fr; background: rgba(57, 135, 229, 0.12); border: 1px solid rgba(57, 135, 229, 0.35); }
+#parts li.vs:hover { background: rgba(57, 135, 229, 0.12); }
+
+/* result banner, hint, help, loading */
+#result { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); z-index: 3; text-align: center; padding: 18px 26px 16px;
+  border-radius: 14px; background: var(--hud2); border: 1px solid var(--line2); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5); max-width: min(520px, 90vw);
+  animation: pop 0.45s cubic-bezier(0.2, 1.4, 0.4, 1); }
+@keyframes pop { from { transform: translate(-50%, -50%) scale(0.85); opacity: 0; } }
+#result b { display: block; font: 700 40px/1 var(--display); letter-spacing: 0.04em; }
+#result p { margin: 8px 0 12px; color: var(--text-2); }
+#result .row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+#hint { position: absolute; z-index: 2; pointer-events: none; font: 600 12px/1 var(--sans); padding: 6px 9px; border-radius: 6px; background: var(--hud2);
+  border: 1px solid var(--line2); transform: translate(14px, 14px); white-space: nowrap; }
+#help { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 0, 0.55); z-index: 5; padding: 16px; }
+#help .card { background: var(--hud2); border: 1px solid var(--line2); border-radius: 14px; padding: 20px 22px; max-width: 560px; display: grid; gap: 12px;
+  max-height: 100%; overflow: auto; }
+#help h2 { margin: 0; font: 700 26px/1 var(--display); }
+#help dl { display: grid; grid-template-columns: auto 1fr; gap: 7px 14px; margin: 0; font-size: 13.5px; }
+#help dt { font-weight: 700; white-space: nowrap; }
+#help dd { margin: 0; color: var(--text-2); }
+#help kbd { font: 600 12px/1 var(--mono); background: rgba(255, 255, 255, 0.1); border: 1px solid var(--line2); border-bottom-width: 2px; padding: 2px 5px; border-radius: 4px; }
+#loading { position: absolute; inset: 0; z-index: 6; display: grid; place-items: center; padding: 20px;
+  background: radial-gradient(ellipse at 50% 35%, #182540, #070c16 70%); transition: opacity 0.8s; }
+#loading.done { opacity: 0; pointer-events: none; }
+.ld { width: min(470px, 100%); display: grid; gap: 14px; }
+.ld h1 { margin: 0; font: 700 clamp(48px, 12vw, 72px)/0.9 var(--display); letter-spacing: 0.02em; }
+.ld h1 .s { color: var(--saffron); } .ld h1 .g { color: var(--green); }
+.ld p { margin: 0; color: var(--text-2); }
+.bar { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--saffron), #fff, var(--green)); transition: width 0.25s; }
+#ld-step { font: 500 12px/1.3 var(--mono); color: var(--muted); }
+.start { justify-self: start; border: 0; background: var(--saffron); color: #1a1004; font: 700 17px/1 var(--display); letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 13px 20px; border-radius: 9px; cursor: pointer; }
+#app.focus .scen, #app.focus .feed, #app.focus .chain, #app.focus #caption, #app.focus .speed, #app.focus .bottom { opacity: 0; pointer-events: none; }
+#app.focus #tags { display: none; }
+#app.focus::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background: radial-gradient(ellipse at 34% 50%, transparent 42%, rgba(4, 8, 16, 0.62) 100%); }
+.scen, .feed, .chain, .speed, .bottom { transition: opacity 0.35s; }
+#fps { position: absolute; left: 50%; bottom: calc(150px + var(--safe-b)); transform: translateX(-50%); z-index: 2; font: 600 11px/1 var(--mono);
+  color: var(--muted); pointer-events: none; }
+.mob { display: none; }
+
+@media (max-width: 1180px) {
+  .feed { width: 300px; }
+  .bottom { right: 322px; }
+  #caption { right: 322px; font-size: 17.5px; }
+}
+@media (max-width: 980px) {
+  .chain { display: none; }
+  #caption { font-size: 16.5px; }
+}
+@media (max-width: 820px) {
+  .desk { display: none !important; }
+  .mob { display: inline-flex; }
+  .top { left: 6px; right: 6px; top: calc(6px + var(--safe-t)); padding: 6px 8px; gap: 8px; }
+  .top .brand .sub { display: none; }
+  .play [data-speed] { display: none; }
+  .play .time { font-size: 11px; }
+  .brand b { font-size: 18px; }
+  .clock { font-size: 13px; }
+  .top .grow { flex: 1; }
+  .topright { display: none; }
+  #caption { left: 6px; right: 6px; width: auto; max-width: none; margin: 0; top: calc(52px + var(--safe-t)); font-size: 15.5px; padding: 8px 12px 8px 10px; }
+  #app.focus::after { background: radial-gradient(ellipse at 50% 26%, transparent 38%, rgba(4, 8, 16, 0.62) 100%); }
+  .plab { padding: 3px; }
+  .plab span { display: none; }
+  #mstate { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .scen { left: 6px; right: 6px; top: auto; width: auto; bottom: calc(100px + var(--safe-b)); padding: 8px; gap: 8px; }
+  .scen .k, .scen .note, .scen .cams { display: none; }
+  .scen .grid { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .scen .grid button { flex: none; padding: 8px 10px; }
+  .scen .grid button small { display: none; }
+  .speed { display: none; }
+  .bottom { left: 6px; right: 6px; bottom: calc(6px + var(--safe-b)); padding: 8px; gap: 6px; }
+  #route { height: 40px; }
+  .play { gap: 6px; }
+  .play .btn { padding: 7px 8px; }
+  .feed { display: none; left: 6px; right: 6px; width: auto; top: auto; bottom: calc(150px + var(--safe-b)); max-height: 38vh; }
+  .feed.mshow { display: grid; }
+  .panel { top: auto; left: 6px; right: 6px; width: auto; height: 52%; bottom: calc(6px + var(--safe-b)); }
+  #fps { bottom: calc(250px + var(--safe-b)); }
+}
+@media (max-width: 820px) and (max-height: 560px) {
+  .feed { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01s !important; transition-duration: 0.01s !important; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="app">
+  <canvas id="c" aria-label="3D view of the Indian street with the delivery robot"></canvas>
+  <div id="tags" aria-hidden="true"></div>
+  <svg id="leaders" aria-hidden="true"></svg>
+  <div id="labels"></div>
+
+  <header class="hud top">
+    <a class="brand" href="../" title="Back to the Bharat-Bot project page"><i class="dot"></i><b><span class="s">BHARAT</span>-<span class="g">BOT</span></b><span class="sub">Digital twin</span></a>
+    <span class="clock" id="clock">000.0 s</span>
+    <span class="grow mob"></span>
+    <span class="chip mob" id="mstate">CRUISE</span>
+    <button class="btn mob" id="mhelp" aria-label="Help">?</button>
+  </header>
+
+  <div class="hud topright">
+    <button class="btn" id="hqbtn" aria-pressed="false" title="Sharper picture: higher resolution and softer shadows (slower)">HQ</button>
+    <button class="btn" id="helpbtn" aria-label="Help and controls">? Help</button>
+    <a class="btn" href="../">&larr; Project page</a>
+  </div>
+
+  <div class="chain" id="chain" aria-hidden="true">
+    <span data-l="SENSE">SENSE</span><i>›</i><span data-l="AI">AI</span><i>›</i><span data-l="SAFETY">SAFETY</span><i>›</i><span data-l="ACT">ACTUATORS</span><i>›</i><span data-l="OK">OK</span>
+  </div>
+  <div class="hud fade" id="caption" aria-live="polite"></div>
+
+  <aside class="hud scen" id="scen" aria-label="Tests, robot and camera">
+    <h3 class="k">Run a test</h3>
+    <div class="grid" id="tests">
+      <button data-test="full" class="wide" aria-pressed="true">Full delivery<small>69 m: potholes, dogs, cow, auto, thief, customer</small></button>
+      <button data-test="pothole" aria-pressed="false">Pothole test<small>Holes and muddy water</small></button>
+      <button data-test="dogs" aria-pressed="false">Dog test<small>A pack of 3 street dogs</small></button>
+      <button data-test="theft" aria-pressed="false">Theft test<small>A man tries to steal it</small></button>
+      <button data-test="replay" class="mob" aria-label="Replay">&#8634; Replay</button>
+    </div>
+    <h3 class="k">Robot</h3>
+    <div class="seg" id="robots" role="group" aria-label="Which robot drives">
+      <button data-robot="baseline" aria-pressed="false" title="A standard US-style sidewalk robot: small wheels, no pothole sensing, no dog or theft protocol">US robot</button>
+      <button data-robot="bharat" aria-pressed="true" title="Bharat-Bot, the India-adapted design">Bharat-Bot</button>
+    </div>
+    <p class="note" id="robotnote">Same street, same dogs, same thief. Switch robots to compare.</p>
+    <h3 class="k">Camera</h3>
+    <div class="cams" id="cams">
+      <button class="btn" data-cam="follow" aria-pressed="true" title="Follow the robot (you can still drag to look around)">Follow</button>
+      <button class="btn" data-cam="orbit" aria-pressed="false" title="Free camera: drag to orbit, right-drag to pan, wheel to zoom">Free</button>
+      <button class="btn" data-cam="street" aria-pressed="false">Street</button>
+      <button class="btn" data-cam="top" aria-pressed="false">Top</button>
+      <button class="btn" data-cam="low" aria-pressed="false">Ground</button>
+    </div>
+    <p class="note">Click the robot to take it apart.</p>
+  </aside>
+
+  <aside class="hud feed" id="feed" aria-label="Control room log">
+    <div>
+      <h3 class="k">Control room</h3>
+      <div class="sub">AI suggests · safety decides · hardware protects</div>
+    </div>
+    <ol id="log" aria-live="polite"></ol>
+  </aside>
+
+  <div class="hud speed" id="speed">
+    <svg viewBox="0 0 160 160" aria-hidden="true">
+      <circle cx="80" cy="80" r="62" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="12" stroke-linecap="round" id="g-track"/>
+      <circle cx="80" cy="80" r="62" fill="none" stroke="#2ecc71" stroke-width="12" stroke-linecap="round" id="g-val"/>
+      <text x="80" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="36" font-weight="700" fill="#f5f7fa" id="g-num">0.0</text>
+      <text x="80" y="112" text-anchor="middle" font-size="17" fill="#93a1b8">m/s</text>
+    </svg>
+    <div><div class="k">State</div><div class="state" id="state">CRUISE</div></div>
+    <div class="facts" id="facts"></div>
+  </div>
+
+  <div class="hud bottom" id="bottom">
+    <svg id="route" class="desk" viewBox="0 0 1000 64" preserveAspectRatio="none" aria-label="Map of the street"></svg>
+    <div class="play">
+      <button class="btn" id="playbtn" aria-label="Pause">&#10074;&#10074;</button>
+      <button class="btn" data-speed="1" aria-pressed="true">1×</button>
+      <button class="btn" data-speed="2" aria-pressed="false">2×</button>
+      <button class="btn" data-speed="4" aria-pressed="false">4×</button>
+      <button class="btn mob" id="mspeed" title="Playback speed">1×</button>
+      <div class="scrub"><div id="ticks"></div><input id="scrub" type="range" min="0" max="1000" step="1" value="0" aria-label="Time in the run"></div>
+      <span class="time" id="time">0:00 / 0:00</span>
+      <button class="btn mob" id="mcam" title="Change camera">Follow</button>
+      <button class="btn mob" id="mlog" aria-pressed="false">Log</button>
+    </div>
+  </div>
+
+  <div id="hint" hidden></div>
+  <div id="result" hidden></div>
+  <div id="fps" hidden></div>
+
+  <section class="panel" id="panel" hidden aria-labelledby="p-title">
+    <div class="p-head">
+      <h2 id="p-title">Bharat-Bot, taken apart</h2>
+      <button class="btn" id="p-close">✕ Close</button>
+      <p id="p-sum">Hover a part to light it up. Click it for what it does.</p>
+    </div>
+    <ol id="parts"></ol>
+  </section>
+
+  <div id="help" hidden>
+    <div class="card" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <h2 id="help-title">How to use the twin</h2>
+      <p class="note" style="font-size:13.5px;color:var(--text-2)">This is the Bharat-Bot simulation, replayed in 3D. Every position comes from the same Python
+        simulation as the film, frame by frame, and the control room shows the robot's decisions as it makes them.</p>
+      <dl>
+        <dt>Run a test</dt><dd>Full delivery, or one hazard at a time: potholes, dogs, theft.</dd>
+        <dt>Robot</dt><dd><b>US robot</b> is a standard sidewalk robot. <b>Bharat-Bot</b> is the India-adapted design. Same street, same dogs, same thief.</dd>
+        <dt>Click the robot</dt><dd>It comes apart into labelled parts. <kbd>Esc</kbd> puts it back together.</dd>
+        <dt>Drag / right-drag / wheel</dt><dd>Look around / move / zoom. On a phone: one finger, two fingers, pinch.</dd>
+        <dt><kbd>Space</kbd></dt><dd>Play or pause. <kbd>←</kbd> <kbd>→</kbd> jump 5 seconds.</dd>
+        <dt><kbd>1</kbd> <kbd>2</kbd> <kbd>4</kbd></dt><dd>Playback speed.</dd>
+        <dt><kbd>C</kbd></dt><dd>Next camera.</dd>
+      </dl>
+      <p class="note">Simulation only: nothing here was measured on a real street. Models from the Blender scenes; textures and sky from
+        Poly Haven (CC0); dogs and cow by Quaternius (CC0). Inspired by <a href="https://sumithshridhar.github.io/gh01-twin/">GH-01</a>.</p>
+      <button class="start" id="help-ok">Got it</button>
+    </div>
+  </div>
+
+  <div id="loading">
+    <div class="ld">
+      <h1><span class="s">BHARAT</span>-<span class="g">BOT</span></h1>
+      <p>A delivery robot built for Indian streets. Digital twin of the simulation.</p>
+      <div class="bar"><i id="ld-bar"></i></div>
+      <span id="ld-step">Loading…</span>
+      <button class="start" id="ld-start" hidden>Start</button>
+    </div>
+  </div>
+</div>
+<noscript><p style="padding:20px">The digital twin needs JavaScript and WebGL. The <a href="../">project page</a> works without them.</p></noscript>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
