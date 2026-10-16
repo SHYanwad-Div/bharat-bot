@@ -1,9 +1,7 @@
 <!doctype html>
 <!--
-  Bharat-Bot project page, served by GitHub Pages from /docs (no build step).
-  Repo, Release and Pages links use the placeholders OWNER/REPO and OWNER.github.io/REPO:
-  replace them once the GitHub repository exists (e.g. SHYanwad-Div/bharat-bot, shyanwad-div.github.io/bharat-bot).
-  The videos are not in git; they are attached to the Release tagged v1.0.
+  Bharat-Bot project page, served by GitHub Pages from /docs of github.com/SHYanwad-Div/bharat-bot (no build step).
+  The videos are not in git: the players and download links point at the Release tagged v1.0.
 -->
 <html lang="en">
 <head>
@@ -14,8 +12,8 @@
 <meta name="theme-color" content="#0b1220">
 <meta property="og:title" content="Bharat-Bot: a delivery robot built for Indian streets">
 <meta property="og:description" content="Potholes, street dogs, a cow and a thief. Simulated in Python and Blender: Bharat-Bot delivered on 92% of 200 random streets, a standard sidewalk robot on 0%.">
-<meta property="og:image" content="https://OWNER.github.io/REPO/img/og.jpg">
-<meta property="og:url" content="https://OWNER.github.io/REPO/">
+<meta property="og:image" content="https://shyanwad-div.github.io/bharat-bot/img/og.jpg">
+<meta property="og:url" content="https://shyanwad-div.github.io/bharat-bot/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b1220'/%3E%3Cpath d='M6 9h20v9H6z' fill='%23ff9933'/%3E%3Cpath d='M6 18h20v3a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z' fill='%232ecc71'/%3E%3Ccircle cx='10' cy='25' r='3' fill='%23f5f7fa'/%3E%3Ccircle cx='22' cy='25' r='3' fill='%23f5f7fa'/%3E%3C/svg%3E">
@@ -117,6 +115,7 @@ figure { margin: 0; }
 .player video { width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 10px; border: 1px solid var(--line); }
 .player figcaption { margin-top: 10px; color: var(--text-2); font-size: 15px; }
 .player figcaption b { color: var(--text); }
+.player .missing { display: block; margin-top: 6px; color: var(--amber); }
 .clips { display: flex; flex-wrap: wrap; gap: 8px 18px; list-style: none; padding: 0; margin: 10px 0 0; font-size: 15px; }
 @media (max-width: 820px) { .players { grid-template-columns: 1fr; } }
 
@@ -310,7 +309,7 @@ footer p { margin: 4px 0; max-width: none; }
     <div class="ctas">
       <a class="btn primary" href="#watch">&#9654; Watch the film</a>
       <a class="btn" href="#results">See the results</a>
-      <a class="btn" href="https://github.com/OWNER/REPO">Code on GitHub</a>
+      <a class="btn" href="https://github.com/SHYanwad-Div/bharat-bot">Code on GitHub</a>
     </div>
   </div>
 </header>
@@ -327,27 +326,27 @@ footer p { margin: 4px 0; max-width: none; }
     <div class="players">
       <figure class="player">
         <video controls preload="none" playsinline poster="img/poster-film.jpg" width="1280" height="720">
-          <source src="https://github.com/OWNER/REPO/releases/download/v1.0/bharat_bot_film.mp4" type="video/mp4">
+          <source src="https://github.com/SHYanwad-Div/bharat-bot/releases/download/v1.0/bharat_bot_film.mp4" type="video/mp4">
         </video>
         <figcaption><b>The explainer film</b> · 3 min · 1080p ·
-          <a href="https://github.com/OWNER/REPO/releases/download/v1.0/bharat_bot_film.mp4">download (175 MB)</a></figcaption>
+          <a href="https://github.com/SHYanwad-Div/bharat-bot/releases/download/v1.0/bharat_bot_film.mp4">download (175 MB)</a></figcaption>
       </figure>
       <figure class="player">
         <video controls preload="none" playsinline poster="img/bharat-dogs.jpg" width="960" height="540">
-          <source src="https://github.com/OWNER/REPO/releases/download/v1.0/bharat_bot_highlights.mp4" type="video/mp4">
+          <source src="https://github.com/SHYanwad-Div/bharat-bot/releases/download/v1.0/bharat_bot_highlights.mp4" type="video/mp4">
         </video>
         <figcaption><b>Highlights</b> · 1 min · the problem, five big moments, the scorecard ·
-          <a href="https://github.com/OWNER/REPO/releases/download/v1.0/bharat_bot_highlights.mp4">download (61 MB)</a></figcaption>
+          <a href="https://github.com/SHYanwad-Div/bharat-bot/releases/download/v1.0/bharat_bot_highlights.mp4">download (61 MB)</a></figcaption>
       </figure>
     </div>
     <p class="small muted" style="margin-top:22px">The videos are too big for a git repository, so they are attached to the
-      <a href="https://github.com/OWNER/REPO/releases/tag/v1.0">GitHub Release</a> with the raw Blender renders (720p, no sound):</p>
+      <a href="https://github.com/SHYanwad-Div/bharat-bot/releases/tag/v1.0">GitHub Release</a> with the raw Blender renders (720p, no sound):</p>
     <ul class="clips">
-      <li><a href="https://github.com/OWNER/REPO/releases/download/v1.0/bharat_full.mp4">Bharat-Bot's full run (89 s)</a></li>
-      <li><a href="https://github.com/OWNER/REPO/releases/download/v1.0/baseline_pothole.mp4">Standard robot: pothole</a></li>
-      <li><a href="https://github.com/OWNER/REPO/releases/download/v1.0/baseline_dogs.mp4">Standard robot: dogs</a></li>
-      <li><a href="https://github.com/OWNER/REPO/releases/download/v1.0/baseline_theft.mp4">Standard robot: theft</a></li>
-      <li><a href="https://github.com/OWNER/REPO/releases/download/v1.0/us_sidewalk.mp4">Standard robot on a US sidewalk</a></li>
+      <li><a href="https://github.com/SHYanwad-Div/bharat-bot/releases/download/v1.0/bharat_full.mp4">Bharat-Bot's full run (89 s)</a></li>
+      <li><a href="https://github.com/SHYanwad-Div/bharat-bot/releases/download/v1.0/baseline_pothole.mp4">Standard robot: pothole</a></li>
+      <li><a href="https://github.com/SHYanwad-Div/bharat-bot/releases/download/v1.0/baseline_dogs.mp4">Standard robot: dogs</a></li>
+      <li><a href="https://github.com/SHYanwad-Div/bharat-bot/releases/download/v1.0/baseline_theft.mp4">Standard robot: theft</a></li>
+      <li><a href="https://github.com/SHYanwad-Div/bharat-bot/releases/download/v1.0/us_sidewalk.mp4">Standard robot on a US sidewalk</a></li>
     </ul>
   </div>
 </section>
@@ -367,7 +366,7 @@ footer p { margin: 4px 0; max-width: none; }
           of the makers publishes how deep a pothole its robot can cross or how much water it can wade through, and an
           Indian street asks for both, plus a plan for dogs, cows and auto-rickshaws.</p>
         <p class="muted small">Every number on this page is sourced or marked as an estimate in
-          <a href="https://github.com/OWNER/REPO/blob/main/research/india-delivery-robots.md">research/india-delivery-robots.md</a>
+          <a href="https://github.com/SHYanwad-Div/bharat-bot/blob/main/research/india-delivery-robots.md">research/india-delivery-robots.md</a>
           (66 sources).</p>
       </div>
     </div>
@@ -647,7 +646,7 @@ footer p { margin: 4px 0; max-width: none; }
         pack lose interest about five times faster than one that has merely stopped. If any still robot calmed dogs that
         well, the upgraded standard robot would get past the pack on 21% of streets instead of 0%. A siren on the lid is
         enough to stop a thief; dogs and broken, flooded roads are where Bharat-Bot's design wins. Full write-up, with
-        seeds you can replay: <a href="https://github.com/OWNER/REPO/blob/main/research/evaluation.md">research/evaluation.md</a>.</p>
+        seeds you can replay: <a href="https://github.com/SHYanwad-Div/bharat-bot/blob/main/research/evaluation.md">research/evaluation.md</a>.</p>
     </div>
   </div>
 </section>
@@ -815,10 +814,10 @@ python sim/evaluate.py
 <span class="c"># one seeded street, any robot</span>
 python sim/simulate.py bharat_full --seed 7 --robot baseline</code></pre>
     <ul class="links">
-      <li><a href="https://github.com/OWNER/REPO">Code and README</a></li>
-      <li><a href="https://github.com/OWNER/REPO/blob/main/research/india-delivery-robots.md">Research (66 sources)</a></li>
-      <li><a href="https://github.com/OWNER/REPO/blob/main/research/evaluation.md">Batch evaluation</a></li>
-      <li><a href="https://github.com/OWNER/REPO/blob/main/assets/CREDITS.md">Asset credits</a></li>
+      <li><a href="https://github.com/SHYanwad-Div/bharat-bot">Code and README</a></li>
+      <li><a href="https://github.com/SHYanwad-Div/bharat-bot/blob/main/research/india-delivery-robots.md">Research (66 sources)</a></li>
+      <li><a href="https://github.com/SHYanwad-Div/bharat-bot/blob/main/research/evaluation.md">Batch evaluation</a></li>
+      <li><a href="https://github.com/SHYanwad-Div/bharat-bot/blob/main/assets/CREDITS.md">Asset credits</a></li>
     </ul>
   </div>
 </section>
@@ -839,6 +838,8 @@ python sim/simulate.py bharat_full --seed 7 --robot baseline</code></pre>
         and Claude Code.</li>
       <li><b>Inspired by</b> <a href="https://github.com/sumithshridhar/gh01-twin">GH-01</a>, Sumith Shridhar's greenhouse
         digital twin, and its rule: AI suggests, safety decides, hardware protects.</li>
+      <li><b>Licence:</b> the code is <a href="https://github.com/SHYanwad-Div/bharat-bot/blob/main/LICENSE">MIT</a>; the
+        assets keep their own licences (all CC0).</li>
     </ul>
   </div>
 </section>
@@ -848,7 +849,7 @@ python sim/simulate.py bharat_full --seed 7 --robot baseline</code></pre>
 <footer>
   <div class="wrap">
     <p>Bharat-Bot is a simulation study: nothing here has been built or tested on a real street yet.</p>
-    <p><a href="https://github.com/OWNER/REPO">github.com/OWNER/REPO</a></p>
+    <p><a href="https://github.com/SHYanwad-Div/bharat-bot">github.com/SHYanwad-Div/bharat-bot</a></p>
   </div>
 </footer>
 
@@ -877,6 +878,18 @@ python sim/simulate.py bharat_full --seed 7 --robot baseline</code></pre>
       el.addEventListener("blur", hide);
     });
     window.addEventListener("scroll", hide, { passive: true });
+
+    // A video that isn't on the Release yet: say so instead of leaving a dead player.
+    document.querySelectorAll(".player video source").forEach(function (src) {
+      src.addEventListener("error", function () {
+        var cap = src.closest(".player").querySelector("figcaption");
+        if (cap.querySelector(".missing")) return;
+        var note = document.createElement("span");
+        note.className = "missing";
+        note.innerHTML = 'Not uploaded yet. Check the <a href="https://github.com/SHYanwad-Div/bharat-bot/releases">Releases page</a>.';
+        cap.appendChild(note);
+      });
+    });
   })();
 </script>
 </body>

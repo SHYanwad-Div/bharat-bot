@@ -6,12 +6,13 @@ with an auto-rickshaw behind it, a thief, and the delivery itself — first with
 ways), then with **Bharat-Bot**, an India-adapted design that handles all of it. Everything is rendered in Blender 5.2
 and cut into an explainer film with Remotion.
 
-**Project page:** [`docs/index.html`](docs/index.html), served by GitHub Pages: the problem, the three failures, the
-200-street results, the safety rule, the cost and the limits on one page, with the film embedded.
+**Project page:** <https://shyanwad-div.github.io/bharat-bot/> (source: [`docs/index.html`](docs/index.html)): the
+problem, the three failures, the 200-street results, the safety rule, the cost and the limits on one page, with the film
+embedded.
 
 ## Outputs
 
-The videos and Blender files are too big for git. The MP4s are attached to the GitHub Release (tag `v1.0`); `blend/`,
+The videos and Blender files are too big for git. The MP4s go in the GitHub Release (tag `v1.0`) instead; `blend/`,
 `renders/`, `recordings/` and the downloaded textures and models (`assets/`, sources in `assets/CREDITS.md`) stay
 local and can be rebuilt with the commands under *Re-run everything*.
 
@@ -82,3 +83,8 @@ doesn't use them. No sidewalk robot publishes a wading depth. Costs are paper es
 Textures: Poly Haven (CC0). Dogs and cow: Quaternius via Poly Pizza (CC0). Everything else is procedural. Authors and
 licences of every asset used: `assets/CREDITS.md`.
 Inspired by [GH-01](https://github.com/sumithshridhar/gh01-twin), Sumith Shridhar's greenhouse digital twin.
+
+## Licence
+
+The code and documents in this repository are MIT-licensed (see `LICENSE`). The downloaded assets keep their own
+licences; everything used on screen is CC0 (`assets/CREDITS.md`).

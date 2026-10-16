@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Remotion explainer videos for the Bharat-Bot sidewalk delivery robot simulation",
   "repository": {},
-  "license": "UNLICENSED",
+  "license": "MIT",
   "private": true,
   "dependencies": {
     "@remotion/captions": "4.0.535",
