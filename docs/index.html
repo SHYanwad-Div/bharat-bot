@@ -341,9 +341,10 @@ footer p { margin: 4px 0; max-width: none; }
         <li><b>US robot vs Bharat-Bot</b> on the same street</li>
         <li><b>Control room:</b> every decision as SENSE → AI → SAFETY → ACT</li>
         <li><b>Click the robot</b> to take it apart into labelled parts</li>
+        <li><b>Sound on:</b> barking dogs, motors, the auto-rickshaw, the siren, and a voice that explains each moment</li>
       </ul>
       <div class="ctas"><a class="btn primary" href="twin/">&#9654; Open the 3D twin</a></div>
-      <p class="small muted">About 5 MB. Works on a laptop or a phone with a recent browser.</p>
+      <p class="small muted">About 6 MB. Works on a laptop or a phone with a recent browser.</p>
     </div>
     <a class="twin-shot" href="twin/"><img src="img/twin.jpg" alt="The 3D twin: Bharat-Bot stopped for street dogs, with detection boxes, the control-room log and the speed panel" width="800" height="450" loading="lazy"></a>
   </div>
@@ -873,7 +874,8 @@ python sim/simulate.py bharat_full --seed 7 --robot baseline</code></pre>
       <li><b>Dogs and cow:</b> <a href="https://quaternius.com">Quaternius</a> via <a href="https://poly.pizza">poly.pizza</a>
         (CC0): Husky, Shiba Inu, Cow.</li>
       <li><b>Everything else</b> on screen (both robots, people, auto-rickshaw, shops, poles and wires) is procedural.</li>
-      <li><b>Music and sound effects:</b> synthesised in Python (<code>video/scripts/make_audio.py</code>).</li>
+      <li><b>Music and sound effects:</b> synthesised in Python (<code>video/scripts/make_audio.py</code>; the twin's in
+        <code>sim/export_twin_audio.py</code>). The twin's voice is the visitor's own text-to-speech.</li>
       <li><b>Fonts:</b> Rajdhani and JetBrains Mono (SIL Open Font License).</li>
       <li><b>Built with</b> Python, <a href="https://www.blender.org">Blender 5.2</a>, <a href="https://www.remotion.dev">Remotion</a>,
         <a href="https://threejs.org">three.js</a> (MIT, for the 3D twin) and Claude Code.</li>

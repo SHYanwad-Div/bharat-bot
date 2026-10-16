@@ -13,7 +13,9 @@ embedded.
 **3D digital twin:** <https://shyanwad-div.github.io/bharat-bot/twin/> (source: [`docs/twin/`](docs/twin/)): the same
 street and the same runs in the browser. Pick the full delivery or one test (potholes, dogs, theft), switch between the
 standard robot and Bharat-Bot, watch the control room log every SENSE → AI → SAFETY → ACT decision, scrub through time,
-and click the robot to take it apart into labelled parts. three.js, no build step, about 5 MB.
+and click the robot to take it apart into labelled parts. With sound: motors, tyres, the auto-rickshaw, barking dogs,
+the siren, the film's tanpura drone underneath, and a voice (the visitor's own text-to-speech) that reads each moment
+in plain English. three.js, no build step, about 6 MB.
 
 ## Outputs
 
@@ -53,6 +55,8 @@ sim/export_twin.py   every agent's pose on every frame of the 4 film runs (+ the
                      same event log as the film HUD, the street's potholes → docs/twin/data; web-size textures
 sim/export_twin_models.py   Blender script: the film's street, robots (Bharat-Bot split into labelled parts), people
                      and auto-rickshaw as Draco GLBs, the Quaternius animals trimmed to the clips used, the sky → docs/twin/models
+sim/export_twin_audio.py    the twin's sounds, synthesised with numpy (barks, motors, engine, street, chimes; the film's
+                     tanpura drone and siren from video/scripts/make_audio.py) → docs/twin/audio
 video/               Remotion project: src/bharat/* is the film (HUD, failure overlays, scenes); scripts/make_audio.py
                      synthesises the tanpura-drone music and sound effects
 docs/twin/           the digital twin: js/terrain.js rebuilds the road surface with world.py's own arithmetic (checked
@@ -72,6 +76,7 @@ python video/scripts/make_audio.py                           # music + sound eff
 cd video; npm install; npx remotion render BharatBotFilm ../videos/bharat_bot_film.mp4   # the film (≈10 min)
 python sim/export_twin.py                                    # 3D twin: poses, events, street, textures (≈20 s)
 & $B -b --factory-startup --python sim/export_twin_models.py # 3D twin: models and sky (≈20 s)
+python sim/export_twin_audio.py                              # 3D twin: sounds (≈15 s, needs ffmpeg)
 python -m http.server 8765 --directory docs                  # then open http://localhost:8765/twin/
 ```
 

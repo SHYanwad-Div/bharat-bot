@@ -11,6 +11,7 @@ import { RobotRig, PersonRig, AutoRig, DogRig, CowRig, walker } from './actors.j
 import { FX } from './fx.js';
 import { HUD } from './hud.js';
 import { Explode } from './explode.js';
+import { Sound, Narrator } from './audio.js';
 
 const $ = (s) => document.querySelector(s);
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -58,6 +59,45 @@ controls.maxPolarAngle = Math.PI * 0.495;
 controls.minDistance = 0.5;
 controls.maxDistance = 80;
 controls.target.set(0, 0.4, -5);
+const sound = new Sound(camera);
+const narrator = new Narrator((speaking) => sound.ducking(speaking));
+// sound settings: the master switch, and effects / music / voice one by one (remembered on this device)
+let soundOn = true;
+const aud = { fx: true, music: true, voice: true, voiceName: '' };
+try {
+  soundOn = localStorage.getItem('bb-sound') !== '0';
+  Object.assign(aud, JSON.parse(localStorage.getItem('bb-audio') || '{}'));
+} catch (e) { /* storage blocked */ }
+function applyAudio() {
+  sound.set('master', soundOn);
+  sound.set('fx', aud.fx);
+  sound.set('music', aud.music);
+  narrator.on = soundOn && aud.voice;
+  if (!narrator.on) narrator.stop();
+  narrator.setVoice(aud.voiceName);
+  for (const id of ['#sndbtn', '#msnd']) {
+    const b = $(id);
+    if (b) { b.setAttribute('aria-pressed', soundOn); b.textContent = id === '#msnd' ? (soundOn ? '🔊' : '🔇') : (soundOn ? '🔊 Sound' : '🔇 Muted'); }
+  }
+  for (const b of document.querySelectorAll('[data-snd]')) {
+    b.setAttribute('aria-pressed', aud[b.dataset.snd]);
+    b.hidden = b.dataset.snd === 'voice' && !narrator.ok;
+  }
+  try {
+    localStorage.setItem('bb-sound', soundOn ? '1' : '0');
+    localStorage.setItem('bb-audio', JSON.stringify(aud));
+  } catch (e) { /* storage blocked */ }
+}
+function setSound(on) { soundOn = on; applyAudio(); }
+// the voice picker in Help: the device's English voices, Indian English first
+function fillVoices() {
+  const sel = $('#voicepick');
+  if (!narrator.ok) { sel.closest('label').hidden = true; return; }
+  const vs = narrator.english().sort((a, b) => (/en[-_]IN/i.test(b.lang) - /en[-_]IN/i.test(a.lang)) || a.name.localeCompare(b.name));
+  sel.innerHTML = vs.map((v) => `<option value="${v.name.replace(/"/g, '&quot;')}">${v.name.replace(/</g, '&lt;')}</option>`).join('');
+  if (narrator.voice) sel.value = narrator.voice.name;
+}
+applyAudio();
 
 const SUN_DIR = new THREE.Vector3(0.426, 0.669, 0.609).normalize();   // build_scene.lighting's sun, in three.js axes
 const sun = new THREE.DirectionalLight(0xfff1df, 2.7);
@@ -232,6 +272,7 @@ async function select(test, robot, { keepCamera = false } = {}) {
   }
   if (seq !== selectSeq) return;
   explode.close(true);
+  narrator.stop();
   Object.assign(P, { test, robot, run, clip: win ? run.windows[win] : [0, run.n - 1], t: 0, ended: false });
   for (const d of dogs) d.prepare(run);
   rigs.bharat.root.visible = robot === 'bharat';
@@ -255,6 +296,7 @@ async function select(test, robot, { keepCamera = false } = {}) {
 }
 function setPlaying(on) {
   P.playing = on;
+  if (!on) narrator.stop();
   $('#playbtn').innerHTML = on ? '&#10074;&#10074;' : '&#9654;';
   $('#playbtn').setAttribute('aria-label', on ? 'Pause' : 'Play');
   if (on) hud.hideResult();
@@ -369,7 +411,12 @@ const explode = new Explode({
   camera, controls, fly, fitDistance: (r) => fitDistance(r),
   pause: () => { wasPlaying = P.playing; setPlaying(false); },
   resume: () => { if (wasPlaying && !P.ended) setPlaying(true); },
-  setFocus: (on) => $('#app').classList.toggle('focus', on),
+  setFocus: (on) => {
+    $('#app').classList.toggle('focus', on);
+    narrator.stop();
+    if (on) sound.ui('whoosh', 0.22);
+  },
+  onPick: (part) => { narrator.stop(); narrator.say(`${part.name}. ${part.text}`); },   // the voice explains a clicked part
 });
 const ray = new THREE.Raycaster();
 const ndc = new THREE.Vector2();
@@ -429,6 +476,23 @@ for (const b of document.querySelectorAll('#robots [data-robot]')) b.addEventLis
 for (const b of document.querySelectorAll('[data-speed]')) b.addEventListener('click', () => setSpeed(+b.dataset.speed));
 for (const b of document.querySelectorAll('#cams [data-cam]')) b.addEventListener('click', () => setCam(b.dataset.cam));
 $('#playbtn').addEventListener('click', togglePlay);
+$('#sndbtn').addEventListener('click', () => { sound.start({ rigs, dogs, cow, auto: autoRig }); setSound(!soundOn); });
+$('#msnd').addEventListener('click', () => { sound.start({ rigs, dogs, cow, auto: autoRig }); setSound(!soundOn); });
+for (const b of document.querySelectorAll('[data-snd]')) {
+  b.addEventListener('click', () => {
+    sound.start({ rigs, dogs, cow, auto: autoRig });
+    aud[b.dataset.snd] = !aud[b.dataset.snd];
+    if (aud[b.dataset.snd] && !soundOn) soundOn = true;      // switching one part on also unmutes
+    applyAudio();
+  });
+}
+$('#voicepick').addEventListener('change', (e) => {
+  aud.voiceName = e.target.value;
+  applyAudio();
+  narrator.stop();
+  narrator.say('This voice will read the captions.');
+});
+document.addEventListener('visibilitychange', () => { if (document.hidden) { sound.pause(); narrator.stop(); } else sound.resume(); });
 $('#mspeed').addEventListener('click', () => setSpeed({ 1: 2, 2: 4, 4: 1 }[P.speed]));
 $('#mcam').addEventListener('click', () => setCam(CAMS[(CAMS.indexOf(cam.mode) + 1) % CAMS.length]));
 $('#mlog').addEventListener('click', () => {
@@ -449,7 +513,7 @@ $('#hqbtn').addEventListener('click', () => {
   try { localStorage.setItem('bb-hq', HQ ? '1' : '0'); } catch (e) { /* storage blocked */ }
   applyQuality();
 });
-const help = (on) => { $('#help').hidden = !on; if (on) $('#help-ok').focus(); };
+const help = (on) => { $('#help').hidden = !on; if (on) { fillVoices(); $('#help-ok').focus(); } };
 $('#helpbtn').addEventListener('click', () => help(true));
 $('#mhelp').addEventListener('click', () => help(true));
 $('#help-ok').addEventListener('click', () => help(false));
@@ -464,12 +528,13 @@ addEventListener('keydown', (e) => {
   else if (e.code === 'Digit2') setSpeed(2);
   else if (e.code === 'Digit4') setSpeed(4);
   else if (e.code === 'KeyC') setCam(CAMS[(CAMS.indexOf(cam.mode) + 1) % CAMS.length]);
+  else if (e.code === 'KeyM') setSound(!soundOn);
   else if (e.code === 'KeyH' || e.key === '?') help($('#help').hidden);
   else if (e.code === 'Escape') { if (!$('#help').hidden) help(false); else explode.close(); }
 });
 
 // ── frame loop ───────────────────────────────────────────────────────────────────────────────────────────────
-let last = performance.now(), waterMat = null, fpsAcc = 0, fpsN = 0, fpsT = 0, slow = 0;
+let last = performance.now(), waterMat = null, fpsAcc = 0, fpsN = 0, fpsT = 0, slow = 0, lastU = 0;
 function frame(now) {
   requestAnimationFrame(frame);
   const dt = Math.min(0.1, (now - last) / 1000);
@@ -483,13 +548,16 @@ function frame(now) {
       setPlaying(false);
       if (!P.ended) {
         P.ended = true;
-        hud.showResult(() => { seek(0); setPlaying(true); },
+        const said = hud.showResult(() => { seek(0); setPlaying(true); },
           () => select(P.test, P.robot === 'bharat' ? 'baseline' : 'bharat'),
           () => select(ORDER[(ORDER.indexOf(P.test) % 3) + 1], P.robot));
+        narrator.say(said);
       }
     }
   }
   const u = P.clip[0] + P.t * fps;
+  const prevU = lastU;
+  lastU = u;
   const info = poseAll(u);
   explode.update(dt);
   const rig = activeRig();
@@ -508,7 +576,10 @@ function frame(now) {
   sun.position.copy(sun.target.position).addScaledVector(SUN_DIR, 45);
   if (++shadowTick % 2 === 0 || !P.playing) renderer.shadowMap.needsUpdate = true;
   if (waterMat) waterMat.userData.time.value = now / 1000;
-  hud.update(run, u, u / fps, P.playing);
+  const caption = hud.update(run, u, u / fps, P.playing);
+  // the voice reads each new caption during normal play (not while scrubbing, not at 4x)
+  if (caption && P.playing && P.speed < 4 && u > prevU && u - prevU < 45) narrator.say(caption, P.speed > 1 ? 1.35 : 1.02);
+  sound.update({ run, u, prevU, playing: P.playing, rig, explode: explode.open });
   updateHover();
   renderer.render(scene, camera);
   // frame rate (shown with ?debug). If frames come slowly but steadily (a busy GPU, not a hidden tab that the browser
@@ -567,6 +638,7 @@ function fitDistance(r) {
     scene.environmentIntensity = 0.75;
     waterMat = buildStreet(sd, tex, gStreet);
     buildActors({ robots, people, auto, shiba, husky, cow: cowG });
+    sound.load().catch((e) => console.warn('sound could not load:', e));   // in the background; the twin works without it
     const test = TESTS[params.get('test')] ? params.get('test') : 'full';
     const robot = ['bharat', 'baseline'].includes(params.get('robot')) ? params.get('robot') : 'bharat';
     await select(test, robot);
@@ -582,6 +654,9 @@ function fitDistance(r) {
       $('#loading').classList.add('done');
       setTimeout(() => { $('#loading').hidden = true; }, 900);
       P.started = true;
+      sound.start({ rigs, dogs, cow, auto: autoRig });   // inside the click, so the browser lets sound play
+      narrator.unlock();
+      applyAudio();
       setPlaying(true);
       for (const n of ['bharat_full', 'baseline_full', 'baseline_pothole', 'baseline_dogs', 'baseline_theft']) loadRun(n).catch(() => {});
     };
@@ -598,4 +673,5 @@ function fitDistance(r) {
   }
 })();
 
-window.twin = { P, stats, select, seek, setCam, setSpeed, togglePlay, renderer, scene, camera, controls, explode: () => explode, rigs: () => rigs };
+window.twin = { P, stats, select, seek, setCam, setSpeed, togglePlay, renderer, scene, camera, controls, explode: () => explode,
+  rigs: () => rigs, sound, narrator };

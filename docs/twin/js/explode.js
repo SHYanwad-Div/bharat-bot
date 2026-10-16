@@ -145,6 +145,7 @@ export class Explode {
     this.labels.forEach((l, k) => l.el.classList.toggle('hl', k === i));
     for (const li of document.querySelectorAll('#parts li[data-i]')) li.classList.toggle('hl', +li.dataset.i === i);
     if (sticky) document.querySelector(`#parts li[data-i="${i}"]`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    if (sticky && i >= 0) this.api.onPick?.(parts[i]);
   }
 
   // which part a mesh belongs to (for hover and click while open)

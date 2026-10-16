@@ -192,6 +192,10 @@ a { color: var(--saffron); }
 #help dl { display: grid; grid-template-columns: auto 1fr; gap: 7px 14px; margin: 0; font-size: 13.5px; }
 #help dt { font-weight: 700; white-space: nowrap; }
 #help dd { margin: 0; color: var(--text-2); }
+#help .cams { display: flex; flex-wrap: wrap; gap: 6px; }
+#help .voicepick { display: flex; align-items: center; gap: 8px; }
+#help select { font: 500 13px/1.2 var(--sans); color: var(--text); background: #121c30; border: 1px solid var(--line2); border-radius: 7px;
+  padding: 6px 8px; max-width: 100%; }
 #help kbd { font: 600 12px/1 var(--mono); background: rgba(255, 255, 255, 0.1); border: 1px solid var(--line2); border-bottom-width: 2px; padding: 2px 5px; border-radius: 4px; }
 #loading { position: absolute; inset: 0; z-index: 6; display: grid; place-items: center; padding: 20px;
   background: radial-gradient(ellipse at 50% 35%, #182540, #070c16 70%); transition: opacity 0.8s; }
@@ -278,10 +282,12 @@ a { color: var(--saffron); }
     <span class="clock" id="clock">000.0 s</span>
     <span class="grow mob"></span>
     <span class="chip mob" id="mstate">CRUISE</span>
+    <button class="btn mob" id="msnd" aria-label="Sound on or off">🔊</button>
     <button class="btn mob" id="mhelp" aria-label="Help">?</button>
   </header>
 
   <div class="hud topright">
+    <button class="btn" id="sndbtn" aria-pressed="true" title="Sound, music and the voice reading the captions (M)">🔊 Sound</button>
     <button class="btn" id="hqbtn" aria-pressed="false" title="Sharper picture: higher resolution and softer shadows (slower)">HQ</button>
     <button class="btn" id="helpbtn" aria-label="Help and controls">? Help</button>
     <a class="btn" href="../">&larr; Project page</a>
@@ -314,6 +320,12 @@ a { color: var(--saffron); }
       <button class="btn" data-cam="street" aria-pressed="false">Street</button>
       <button class="btn" data-cam="top" aria-pressed="false">Top</button>
       <button class="btn" data-cam="low" aria-pressed="false">Ground</button>
+    </div>
+    <h3 class="k snd">Sound</h3>
+    <div class="cams snd">
+      <button class="btn" data-snd="fx" aria-pressed="true" title="Motors, dogs, the auto-rickshaw, the siren, the street">Effects</button>
+      <button class="btn" data-snd="music" aria-pressed="true" title="The film's tanpura drone, quietly underneath">Music</button>
+      <button class="btn" data-snd="voice" aria-pressed="true" title="A voice reads each caption aloud">Voice</button>
     </div>
     <p class="note">Click the robot to take it apart.</p>
   </aside>
@@ -378,7 +390,17 @@ a { color: var(--saffron); }
         <dt><kbd>Space</kbd></dt><dd>Play or pause. <kbd>←</kbd> <kbd>→</kbd> jump 5 seconds.</dd>
         <dt><kbd>1</kbd> <kbd>2</kbd> <kbd>4</kbd></dt><dd>Playback speed.</dd>
         <dt><kbd>C</kbd></dt><dd>Next camera.</dd>
+        <dt><kbd>M</kbd></dt><dd>Sound on or off.</dd>
       </dl>
+      <h3 class="k">Sound</h3>
+      <div class="cams">
+        <button class="btn" data-snd="fx" aria-pressed="true">Effects</button>
+        <button class="btn" data-snd="music" aria-pressed="true">Music</button>
+        <button class="btn" data-snd="voice" aria-pressed="true">Voice</button>
+      </div>
+      <label class="note voicepick" for="voicepick">Voice: <select id="voicepick"></select></label>
+      <p class="note">The voice is your own device's text-to-speech, so it sounds different on each phone or computer. All
+        the other sounds are synthesised, like the film's music.</p>
       <p class="note">Simulation only: nothing here was measured on a real street. Models from the Blender scenes; textures and sky from
         Poly Haven (CC0); dogs and cow by Quaternius (CC0). Inspired by <a href="https://sumithshridhar.github.io/gh01-twin/">GH-01</a>.</p>
       <button class="start" id="help-ok">Got it</button>

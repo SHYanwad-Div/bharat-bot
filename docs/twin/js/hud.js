@@ -171,6 +171,7 @@ export class HUD {
       i = j - 1;
     }
     if (!cap && rel < 4.5 && !past.length) { cap = INTRO[this.key] || ''; capKey = `intro:${this.key}`; }
+    let spoken = null;
     if (capKey !== this.capKey) {
       this.capKey = capKey;
       const el = $('#caption');
@@ -178,6 +179,7 @@ export class HUD {
         el.textContent = cap;
         el.style.borderLeftColor = capCol;
         el.classList.remove('fade');
+        spoken = cap;
       } else el.classList.add('fade');
     }
     // speed + state
@@ -220,6 +222,7 @@ export class HUD {
         dot.setAttribute('stroke', col);
       }
     }
+    return spoken;          // a caption that just appeared (for the voice), or null
   }
 
   showResult(onReplay, onOther, onNext) {
@@ -233,6 +236,7 @@ export class HUD {
     $('#r-replay').onclick = onReplay;
     $('#r-other').onclick = onOther;
     $('#r-next')?.addEventListener('click', onNext);
+    return `${word.charAt(0) + word.slice(1).toLowerCase()}. ${text}`;
   }
   hideResult() { $('#result').hidden = true; }
 }

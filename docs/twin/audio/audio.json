@@ -1,0 +1,104 @@
+{
+ "music": {
+  "duration": 65.0,
+  "loopStart": 0.1,
+  "loopEnd": 65.1,
+  "kb": 637
+ },
+ "ambience": {
+  "duration": 32.0,
+  "loopStart": 0.1,
+  "loopEnd": 32.1,
+  "kb": 189
+ },
+ "motor": {
+  "duration": 1.0,
+  "loopStart": 0.1,
+  "loopEnd": 1.1,
+  "kb": 9
+ },
+ "rumble": {
+  "duration": 1.5,
+  "loopStart": 0.1,
+  "loopEnd": 1.6,
+  "kb": 10
+ },
+ "servo": {
+  "duration": 0.8,
+  "loopStart": 0.1,
+  "loopEnd": 0.9,
+  "kb": 6
+ },
+ "engine": {
+  "duration": 2.0,
+  "loopStart": 0.1,
+  "loopEnd": 2.1,
+  "kb": 15
+ },
+ "siren": {
+  "duration": 3.0,
+  "loopStart": 0.1,
+  "loopEnd": 3.1,
+  "kb": 22
+ },
+ "bark0": {
+  "duration": 0.27,
+  "kb": 3
+ },
+ "bark1": {
+  "duration": 0.5,
+  "kb": 4
+ },
+ "bark2": {
+  "duration": 0.34,
+  "kb": 3
+ },
+ "bark3": {
+  "duration": 0.67,
+  "kb": 6
+ },
+ "moo": {
+  "duration": 2.02,
+  "kb": 14
+ },
+ "shutter": {
+  "duration": 0.22,
+  "kb": 2
+ },
+ "otp": {
+  "duration": 0.45,
+  "kb": 4
+ },
+ "sense": {
+  "duration": 0.14,
+  "kb": 1
+ },
+ "ai": {
+  "duration": 0.2,
+  "kb": 2
+ },
+ "safety": {
+  "duration": 0.21,
+  "kb": 2
+ },
+ "act": {
+  "duration": 0.05,
+  "kb": 1
+ },
+ "ok": {
+  "duration": 0.84,
+  "kb": 6
+ },
+ "alarm": {
+  "duration": 0.44,
+  "kb": 4
+ },
+ "fail": {
+  "duration": 0.7,
+  "kb": 5
+ },
+ "whoosh": {
+  "duration": 0.9,
+  "kb": 7
+ }
+}
