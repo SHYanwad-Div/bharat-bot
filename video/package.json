@@ -1,0 +1,44 @@
+{
+  "name": "bharat-bot-video",
+  "version": "1.0.0",
+  "description": "Remotion explainer videos for the Bharat-Bot sidewalk delivery robot simulation",
+  "repository": {},
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@remotion/captions": "4.0.535",
+    "@remotion/cli": "4.0.535",
+    "@remotion/effects": "4.0.535",
+    "@remotion/fonts": "4.0.535",
+    "@remotion/google-fonts": "4.0.535",
+    "@remotion/layout-utils": "4.0.535",
+    "@remotion/media": "4.0.535",
+    "@remotion/media-utils": "4.0.535",
+    "@remotion/paths": "4.0.535",
+    "@remotion/shapes": "4.0.535",
+    "@remotion/transitions": "4.0.535",
+    "mediabunny": "1.61.3",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.535"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.535",
+    "@types/react": "19.2.7",
+    "@types/web": "0.0.166",
+    "eslint": "9.39.5",
+    "prettier": "3.8.1",
+    "typescript": "5.9.3"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "studio": "remotion studio",
+    "build": "remotion bundle",
+    "render:test": "remotion render Main out/test.mp4",
+    "fixtures": "remotion render FixtureClip public/_fixtures/test-clip.mp4",
+    "sample-telemetry": "node scripts/make-sample-telemetry.mjs",
+    "upgrade": "remotion upgrade",
+    "typecheck": "tsc",
+    "lint": "eslint src && tsc"
+  }
+}

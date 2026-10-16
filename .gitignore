@@ -1,0 +1,37 @@
+# What stays out of git. Everything here is either too big for a repo or rebuilt by the
+# commands in README.md; the finished videos are attached to the GitHub Release instead.
+
+# Blender scenes, rendered frames, screen recordings and the encoded videos
+/blend/
+/renders/
+/recordings/
+/videos/*.mp4
+*.blend1
+
+# GH-01 (Sumith Shridhar's repo), cloned here only for reading
+/reference/
+
+# Downloaded textures and 3D models: fetch them again from the sources in assets/CREDITS.md
+/assets/*
+!/assets/CREDITS.md
+!/assets/tools/
+# third-party add-on (MIT, ahujasid/mcp-for-blender); the pinned commit is in assets/tools/README.md
+/assets/tools/blender_mcp.py
+
+# Remotion: dependencies, render output, and media copied or generated into public/
+node_modules/
+/video/public/clips/
+/video/public/audio/
+/video/public/_fixtures/
+
+# Simulation and render output, Python caches
+out/
+__pycache__/
+*.py[cod]
+
+# Local Claude Code skills (reinstall from skills-lock.json) and OS clutter
+/.claude/
+.env
+Thumbs.db
+desktop.ini
+.DS_Store

@@ -1,0 +1,926 @@
+{
+ "version": 1,
+ "generated": "2026-10-15",
+ "seeds": 200,
+ "firstSeed": 0,
+ "ci": "95% (Wilson for rates, Student t for means); values are [mean, low, high]",
+ "robots": {
+  "baseline": "Standard robot (as in the film)",
+  "steelman": "Standard robot, steel-manned",
+  "bharat": "Bharat-Bot",
+  "no_perception": "without pothole & water perception",
+  "no_dog_freeze": "without the dog freeze protocol",
+  "no_alarm": "without the tamper alarm",
+  "no_yield": "without traffic yield",
+  "no_bogie": "without rocker-bogie (rigid chassis)",
+  "no_perception_bogie": "without perception and rocker-bogie",
+  "steelman_still": "Steel-manned, if any still robot calmed dogs"
+ },
+ "scenarios": [
+  {
+   "id": "full",
+   "scenario": "bharat_full",
+   "title": "Full delivery",
+   "about": "restaurant to apartment gate (70 m): potholes, water, speed breaker, dog pack, cow + auto-rickshaw, a thief on half the streets, OTP hand-over",
+   "results": {
+    "baseline": {
+     "n": 200,
+     "success": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "stuck": [
+      0.185,
+      0.137,
+      0.245
+     ],
+     "deepWater": [
+      0.25,
+      0.195,
+      0.314
+     ],
+     "floodRefusal": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "holesPer100m": [
+      3.9,
+      3.5,
+      4.4
+     ],
+     "dogChaseS": [
+      110.2,
+      100.5,
+      119.8
+     ],
+     "dogContact": [
+      0.91,
+      0.846,
+      0.949
+     ],
+     "minGapDogM": [
+      -0.13,
+      -0.17,
+      -0.09
+     ],
+     "minGapVehicleM": [
+      0.34,
+      0.33,
+      0.35
+     ],
+     "trafficConflict": [
+      0.027,
+      0.007,
+      0.093
+     ],
+     "outcomes": {
+      "stuck": 37,
+      "flooded": 50,
+      "hit_dog": 111,
+      "timeout": 2
+     },
+     "successDry": [
+      0.0,
+      0.0,
+      0.037
+     ],
+     "successWet": [
+      0.0,
+      0.0,
+      0.037
+     ]
+    },
+    "steelman": {
+     "n": 200,
+     "success": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "stuck": [
+      0.005,
+      0.001,
+      0.028
+     ],
+     "deepWater": [
+      0.285,
+      0.227,
+      0.351
+     ],
+     "floodRefusal": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "holesPer100m": [
+      3.3,
+      2.8,
+      3.7
+     ],
+     "dogChaseS": [
+      135.8,
+      132.7,
+      138.9
+     ],
+     "dogContact": [
+      0.132,
+      0.088,
+      0.193
+     ],
+     "theftPerAttempt": [
+      0.0,
+      0.0,
+      0.658
+     ],
+     "minGapDogM": [
+      0.16,
+      0.1,
+      0.23
+     ],
+     "minGapPersonM": [
+      0.63,
+      0.55,
+      0.71
+     ],
+     "minGapVehicleM": [
+      0.35,
+      0.34,
+      0.35
+     ],
+     "trafficConflict": [
+      0.016,
+      0.003,
+      0.086
+     ],
+     "outcomes": {
+      "stuck": 1,
+      "flooded": 57,
+      "hit_dog": 21,
+      "timeout": 121
+     },
+     "successDry": [
+      0.0,
+      0.0,
+      0.037
+     ],
+     "successWet": [
+      0.0,
+      0.0,
+      0.037
+     ]
+    },
+    "bharat": {
+     "n": 200,
+     "success": [
+      0.925,
+      0.88,
+      0.954
+     ],
+     "timeToGoalS": [
+      86.9,
+      85.5,
+      88.3
+     ],
+     "stuck": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "deepWater": [
+      0.005,
+      0.001,
+      0.028
+     ],
+     "floodRefusal": [
+      0.065,
+      0.038,
+      0.108
+     ],
+     "holesPer100m": [
+      2.4,
+      2.2,
+      2.7
+     ],
+     "dogChaseS": [
+      21.6,
+      20.6,
+      22.6
+     ],
+     "dogContact": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "theftPerAttempt": [
+      0.0,
+      0.0,
+      0.041
+     ],
+     "minGapDogM": [
+      0.65,
+      0.63,
+      0.68
+     ],
+     "minGapPersonM": [
+      0.21,
+      0.21,
+      0.22
+     ],
+     "minGapVehicleM": [
+      0.32,
+      0.31,
+      0.33
+     ],
+     "trafficConflict": [
+      0.062,
+      0.036,
+      0.106
+     ],
+     "outcomes": {
+      "delivered": 185,
+      "flooded": 1,
+      "refused_flood": 13,
+      "hit_person": 1
+     },
+     "successDry": [
+      0.99,
+      0.946,
+      0.998
+     ],
+     "successWet": [
+      0.86,
+      0.779,
+      0.915
+     ]
+    }
+   },
+   "bharatVsBaselinePts": [
+    92.5,
+    88.8,
+    96.2
+   ],
+   "bharatVsSteelmanPts": [
+    92.5,
+    88.8,
+    96.2
+   ]
+  },
+  {
+   "id": "pothole",
+   "scenario": "baseline_pothole",
+   "title": "Pothole stretch",
+   "about": "the film's 12 m pothole segment with a random broken surface, no agents",
+   "results": {
+    "baseline": {
+     "n": 200,
+     "success": [
+      0.58,
+      0.511,
+      0.646
+     ],
+     "timeToGoalS": [
+      8.8,
+      8.8,
+      8.8
+     ],
+     "stuck": [
+      0.08,
+      0.05,
+      0.126
+     ],
+     "deepWater": [
+      0.34,
+      0.278,
+      0.408
+     ],
+     "floodRefusal": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "holesPer100m": [
+      3.8,
+      2.8,
+      4.8
+     ],
+     "outcomes": {
+      "reached": 116,
+      "stuck": 16,
+      "flooded": 68
+     },
+     "successDry": [
+      0.86,
+      0.779,
+      0.915
+     ],
+     "successWet": [
+      0.3,
+      0.219,
+      0.396
+     ]
+    },
+    "steelman": {
+     "n": 200,
+     "success": [
+      0.685,
+      0.618,
+      0.745
+     ],
+     "timeToGoalS": [
+      8.8,
+      8.8,
+      8.8
+     ],
+     "stuck": [
+      0.005,
+      0.001,
+      0.028
+     ],
+     "deepWater": [
+      0.31,
+      0.25,
+      0.377
+     ],
+     "floodRefusal": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "holesPer100m": [
+      4.0,
+      3.1,
+      4.9
+     ],
+     "outcomes": {
+      "reached": 137,
+      "stuck": 1,
+      "flooded": 62
+     },
+     "successDry": [
+      0.99,
+      0.946,
+      0.998
+     ],
+     "successWet": [
+      0.38,
+      0.291,
+      0.478
+     ]
+    },
+    "bharat": {
+     "n": 200,
+     "success": [
+      0.925,
+      0.88,
+      0.954
+     ],
+     "timeToGoalS": [
+      10.4,
+      10.2,
+      10.7
+     ],
+     "stuck": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "deepWater": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "floodRefusal": [
+      0.075,
+      0.046,
+      0.12
+     ],
+     "holesPer100m": [
+      3.8,
+      3.1,
+      4.6
+     ],
+     "outcomes": {
+      "reached": 185,
+      "refused_flood": 15
+     },
+     "successDry": [
+      1.0,
+      0.963,
+      1.0
+     ],
+     "successWet": [
+      0.85,
+      0.767,
+      0.907
+     ]
+    }
+   },
+   "bharatVsBaselinePts": [
+    34.5,
+    27.9,
+    41.1
+   ],
+   "bharatVsSteelmanPts": [
+    24.0,
+    18.0,
+    30.0
+   ]
+  },
+  {
+   "id": "dogs",
+   "scenario": "baseline_dogs",
+   "title": "Dog pack",
+   "about": "16.5 m past three resting street dogs, smooth street",
+   "results": {
+    "baseline": {
+     "n": 200,
+     "success": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "stuck": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "deepWater": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "floodRefusal": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "holesPer100m": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "dogChaseS": [
+      62.0,
+      62.0,
+      62.1
+     ],
+     "dogContact": [
+      0.97,
+      0.936,
+      0.986
+     ],
+     "minGapDogM": [
+      -0.17,
+      -0.18,
+      -0.16
+     ],
+     "outcomes": {
+      "hit_dog": 194,
+      "timeout": 6
+     }
+    },
+    "steelman": {
+     "n": 200,
+     "success": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "stuck": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "deepWater": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "floodRefusal": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "holesPer100m": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "dogChaseS": [
+      61.6,
+      61.4,
+      61.8
+     ],
+     "dogContact": [
+      0.01,
+      0.003,
+      0.036
+     ],
+     "minGapDogM": [
+      0.66,
+      0.54,
+      0.78
+     ],
+     "outcomes": {
+      "hit_dog": 2,
+      "timeout": 198
+     }
+    },
+    "bharat": {
+     "n": 200,
+     "success": [
+      1.0,
+      0.981,
+      1.0
+     ],
+     "timeToGoalS": [
+      39.4,
+      38.5,
+      40.4
+     ],
+     "stuck": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "deepWater": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "floodRefusal": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "holesPer100m": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "dogChaseS": [
+      21.3,
+      20.3,
+      22.2
+     ],
+     "dogContact": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "minGapDogM": [
+      0.74,
+      0.73,
+      0.75
+     ],
+     "outcomes": {
+      "reached": 200
+     }
+    },
+    "steelman_still": {
+     "n": 200,
+     "success": [
+      0.21,
+      0.159,
+      0.272
+     ],
+     "timeToGoalS": [
+      54.7,
+      52.6,
+      56.8
+     ],
+     "stuck": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "deepWater": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "floodRefusal": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "holesPer100m": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "dogChaseS": [
+      51.8,
+      50.8,
+      52.7
+     ],
+     "dogContact": [
+      0.18,
+      0.133,
+      0.239
+     ],
+     "minGapDogM": [
+      0.04,
+      0.01,
+      0.07
+     ],
+     "outcomes": {
+      "reached": 42,
+      "hit_dog": 36,
+      "timeout": 122
+     }
+    }
+   },
+   "bharatVsBaselinePts": [
+    100.0,
+    100.0,
+    100.0
+   ],
+   "bharatVsSteelmanPts": [
+    100.0,
+    100.0,
+    100.0
+   ]
+  },
+  {
+   "id": "theft",
+   "scenario": "baseline_theft",
+   "title": "Theft attempt",
+   "about": "13.6 m past a thief who always tries, smooth street",
+   "results": {
+    "baseline": {
+     "n": 200,
+     "success": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "stuck": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "deepWater": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "floodRefusal": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "holesPer100m": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "theftPerAttempt": [
+      1.0,
+      0.981,
+      1.0
+     ],
+     "minGapPersonM": [
+      0.47,
+      0.45,
+      0.49
+     ],
+     "outcomes": {
+      "stolen": 200
+     }
+    },
+    "steelman": {
+     "n": 200,
+     "success": [
+      1.0,
+      0.981,
+      1.0
+     ],
+     "timeToGoalS": [
+      19.4,
+      19.3,
+      19.5
+     ],
+     "stuck": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "deepWater": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "floodRefusal": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "holesPer100m": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "theftPerAttempt": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "minGapPersonM": [
+      0.47,
+      0.45,
+      0.49
+     ],
+     "outcomes": {
+      "reached": 200
+     }
+    },
+    "bharat": {
+     "n": 200,
+     "success": [
+      0.985,
+      0.957,
+      0.995
+     ],
+     "timeToGoalS": [
+      19.4,
+      19.3,
+      19.5
+     ],
+     "stuck": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "deepWater": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "floodRefusal": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "holesPer100m": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "theftPerAttempt": [
+      0.0,
+      0.0,
+      0.019
+     ],
+     "minGapPersonM": [
+      0.33,
+      0.31,
+      0.35
+     ],
+     "outcomes": {
+      "reached": 197,
+      "hit_person": 3
+     }
+    }
+   },
+   "bharatVsBaselinePts": [
+    98.5,
+    96.8,
+    100.0
+   ],
+   "bharatVsSteelmanPts": [
+    -1.5,
+    -3.2,
+    0.2
+   ]
+  }
+ ],
+ "ablation": [
+  {
+   "id": "no_perception",
+   "label": "without pothole & water perception",
+   "success": [
+    0.85,
+    0.794,
+    0.893
+   ],
+   "changePts": [
+    -7.5,
+    -11.4,
+    -3.6
+   ],
+   "outcomes": {
+    "delivered": 170,
+    "flooded": 27,
+    "hit_dog": 1,
+    "hit_person": 2
+   }
+  },
+  {
+   "id": "no_dog_freeze",
+   "label": "without the dog freeze protocol",
+   "success": [
+    0.395,
+    0.33,
+    0.464
+   ],
+   "changePts": [
+    -53.0,
+    -60.0,
+    -46.0
+   ],
+   "outcomes": {
+    "delivered": 79,
+    "flooded": 1,
+    "refused_flood": 9,
+    "hit_dog": 35,
+    "timeout": 76
+   }
+  },
+  {
+   "id": "no_alarm",
+   "label": "without the tamper alarm",
+   "success": [
+    0.485,
+    0.417,
+    0.554
+   ],
+   "changePts": [
+    -44.0,
+    -50.9,
+    -37.1
+   ],
+   "outcomes": {
+    "delivered": 97,
+    "flooded": 1,
+    "refused_flood": 12,
+    "stolen": 89,
+    "hit_person": 1
+   }
+  },
+  {
+   "id": "no_yield",
+   "label": "without traffic yield",
+   "success": [
+    0.87,
+    0.816,
+    0.91
+   ],
+   "changePts": [
+    -5.5,
+    -8.7,
+    -2.3
+   ],
+   "outcomes": {
+    "delivered": 174,
+    "flooded": 1,
+    "refused_flood": 13,
+    "hit_vehicle": 11,
+    "hit_person": 1
+   }
+  },
+  {
+   "id": "no_bogie",
+   "label": "without rocker-bogie (rigid chassis)",
+   "success": [
+    0.925,
+    0.88,
+    0.954
+   ],
+   "changePts": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "outcomes": {
+    "delivered": 185,
+    "flooded": 1,
+    "refused_flood": 13,
+    "hit_person": 1
+   }
+  },
+  {
+   "id": "no_perception_bogie",
+   "label": "without perception and rocker-bogie",
+   "success": [
+    0.835,
+    0.777,
+    0.88
+   ],
+   "changePts": [
+    -9.0,
+    -13.2,
+    -4.8
+   ],
+   "outcomes": {
+    "delivered": 167,
+    "stuck": 3,
+    "flooded": 27,
+    "hit_dog": 1,
+    "hit_person": 2
+   }
+  }
+ ]
+}
