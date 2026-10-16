@@ -13,10 +13,14 @@ const MODE = { CRUISE: C.green, ARRIVING: C.green, DELIVERED: C.green, 'POTHOLE 
 const modeName = (m) => (m === 'TURN' ? 'CRUISE' : m);
 
 // what each logged decision means, in plain words (shown under the decision chain)
-// (the first event of a moment that has a caption is shown, so each caption tells the whole moment)
+// (the first event of a moment that has a caption is shown, so each caption tells the whole moment; a hazard met
+// again gets the next line of its list, so nothing is said twice)
 const CAPTIONS = [
-  [/^Pothole \d+ cm deep/, 'Its depth camera sees a pothole 7 m ahead, so it plans a path round it.'],
-  [/^Water-filled pothole/, 'Muddy water hides how deep this hole is, so it won\'t drive in. It goes round on solid road.'],
+  [/^Pothole \d+ cm deep/, ['Its depth camera sees a pothole 7 m ahead, so it plans a path round it.',
+    'Another pothole. It steers round this one too, keeping its wheels on solid road.',
+    'One more hole. It slows to walking pace and goes round again.']],
+  [/^Water-filled pothole/, ['Muddy water hides how deep this hole is, so it won\'t drive in. It goes round on solid road.',
+    'Another hole full of muddy water, too deep to see into. It goes round this one as well.']],
   [/^Speed breaker/, 'A 12 cm speed breaker with no paint on it. It slows down and climbs over on its big wheels.'],
   [/^Waterlogged patch/, 'Shallow water, 3.5 cm deep. That is under its 8 cm limit, so it wades through slowly.'],
   [/^Fleet map: dog hotspot/, 'Other robots reported dogs near this garbage heap, so it slows down early.'],
@@ -166,12 +170,16 @@ export class HUD {
       while (j > 0 && past[j - 1].f === past[i].f) j--;
       for (let m = j; m <= i && !cap; m++) {
         const hit = CAPTIONS.find(([re]) => re.test(past[m].title));
-        if (hit) { cap = hit[1]; capKey = `${past[m].f}:${m}`; capCol = LEVEL[(past.find((e) => e.f === past[m].f && e.level === 'ALARM') || past[m]).level]; }
+        if (hit) {
+          const seen = this.run.events.filter((e) => e.f < past[m].f && hit[0].test(e.title)).length;   // in the whole run
+          cap = Array.isArray(hit[1]) ? hit[1][Math.min(seen, hit[1].length - 1)] : hit[1];
+          capKey = `${past[m].f}:${m}`;
+          capCol = LEVEL[(past.find((e) => e.f === past[m].f && e.level === 'ALARM') || past[m]).level];
+        }
       }
       i = j - 1;
     }
     if (!cap && rel < 4.5 && !past.length) { cap = INTRO[this.key] || ''; capKey = `intro:${this.key}`; }
-    let spoken = null;
     if (capKey !== this.capKey) {
       this.capKey = capKey;
       const el = $('#caption');
@@ -179,7 +187,6 @@ export class HUD {
         el.textContent = cap;
         el.style.borderLeftColor = capCol;
         el.classList.remove('fade');
-        spoken = cap;
       } else el.classList.add('fade');
     }
     // speed + state
@@ -222,7 +229,7 @@ export class HUD {
         dot.setAttribute('stroke', col);
       }
     }
-    return spoken;          // a caption that just appeared (for the voice), or null
+    return cap ? { text: cap, key: capKey } : null;     // the caption on screen now (the voice speaks each key once)
   }
 
   showResult(onReplay, onOther, onNext) {

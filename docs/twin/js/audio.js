@@ -195,6 +195,8 @@ const SPOKEN = [[new RegExp(`(\\d+(?:\\.\\d+)?)\\s?cm\\b(?=\\s+(?!${PLURAL_NEXT}
   [/(\d+(?:\.\d+)?)\s?s\b/g, '$1 seconds'], [/(\d+)\s?dB\b/g, '$1 decibel'], [/km\/h/g, 'kilometres an hour'],
   [/\bOTP\b/g, 'O T P'], [/\bIMU\b/g, 'I M U'], [/\bGPS\b/g, 'G P S'], [/\bAI\b/g, 'A I'], [/·/g, ','], [/–/g, ' to ']];
 export const speakable = (text) => SPOKEN.reduce((s, [re, to]) => s.replace(re, to), text);
+// men's voices on common systems (Edge/Azure, Google, Windows, Apple); 'Male' alone catches Google UK English Male
+const MALE = /\b(male|prabhat|ravi|rishi|aarav|kunal|madhur|hemant|george|ryan|thomas|guy|christopher|eric|davis|tony|jason|brian|andrew|roger|steffan|liam|william|daniel|arthur|alex|aaron|fred|david|mark|james|oliver|reed|eddy|rocko|grandpa)\b/i;
 
 export class Narrator {
   constructor(onSpeaking) {
@@ -213,12 +215,15 @@ export class Narrator {
   }
   english() { return this.ok ? this.synth.getVoices().filter((v) => /^en([-_]|$)/i.test(v.lang)) : []; }
   // the visitor's choice if set; otherwise natural-sounding Indian English, then any natural English voice
+  // the visitor's choice if set; otherwise a man's voice (the user's preference), natural-sounding first, Indian English
+  // among equals: Edge's Prabhat, then Chrome's Google UK English Male, Windows' Ravi, Apple's Rishi...
   pickVoice() {
     const vs = this.english();
     if (!vs.length) return;
     const chosen = vs.find((v) => v.name === this.wanted);
-    const score = (v) => (/en[-_]IN/i.test(v.lang) ? 3 : /en[-_]GB/i.test(v.lang) ? 1.5 : /en[-_]US/i.test(v.lang) ? 1 : 0.5)
-      + (/natural|neural|online|google|premium|enhanced|siri/i.test(v.name) ? 2.5 : 0);
+    const score = (v) => (MALE.test(v.name) ? 4 : 0)
+      + (/natural|neural|online|google|premium|enhanced|siri/i.test(v.name) ? 2.5 : 0)
+      + (/en[-_]IN/i.test(v.lang) ? 2 : /en[-_]GB/i.test(v.lang) ? 1 : /en[-_]US/i.test(v.lang) ? 0.5 : 0.25);
     this.voice = chosen || vs.slice().sort((a, b) => score(b) - score(a))[0];
   }
   setVoice(name) { this.wanted = name; this.pickVoice(); }

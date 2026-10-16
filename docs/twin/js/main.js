@@ -274,6 +274,9 @@ async function select(test, robot, { keepCamera = false } = {}) {
   explode.close(true);
   narrator.stop();
   Object.assign(P, { test, robot, run, clip: win ? run.windows[win] : [0, run.n - 1], t: 0, ended: false });
+  lastU = P.clip[0];
+  spokenKey = null;
+  spokenText = '';
   for (const d of dogs) d.prepare(run);
   rigs.bharat.root.visible = robot === 'bharat';
   rigs.baseline.root.visible = robot === 'baseline';
@@ -304,13 +307,14 @@ function setPlaying(on) {
 function togglePlay() {
   if (!P.run) return;
   if (explode.open) explode.close();
-  if (P.ended) { P.t = 0; P.ended = false; }
+  if (P.ended) { P.t = 0; P.ended = false; lastU = P.clip[0]; }
   setPlaying(!P.playing);
 }
 function seek(t) {
   if (!P.run) return;
   const dur = (P.clip[1] - P.clip[0]) / P.run.fps;
   P.t = clamp(t, 0, dur);
+  lastU = P.clip[0] + P.t * P.run.fps;            // a jump: no sounds for the frames skipped
   if (P.t < dur) { P.ended = false; hud.hideResult(); }
 }
 function setSpeed(s) {
@@ -534,10 +538,13 @@ addEventListener('keydown', (e) => {
 });
 
 // ── frame loop ───────────────────────────────────────────────────────────────────────────────────────────────
-let last = performance.now(), waterMat = null, fpsAcc = 0, fpsN = 0, fpsT = 0, slow = 0, lastU = 0;
+let last = performance.now(), waterMat = null, fpsAcc = 0, fpsN = 0, fpsT = 0, slow = 0, lastU = 0, spokenKey = null, spokenText = '';
 function frame(now) {
   requestAnimationFrame(frame);
-  const dt = Math.min(0.1, (now - last) / 1000);
+  tick(now);
+}
+function tick(now) {
+  const dt = Math.max(0, Math.min(0.1, (now - last) / 1000));
   last = now;
   if (!P.run) return;
   const run = P.run, fps = run.fps, dur = (P.clip[1] - P.clip[0]) / fps;
@@ -577,8 +584,13 @@ function frame(now) {
   if (++shadowTick % 2 === 0 || !P.playing) renderer.shadowMap.needsUpdate = true;
   if (waterMat) waterMat.userData.time.value = now / 1000;
   const caption = hud.update(run, u, u / fps, P.playing);
-  // the voice reads each new caption during normal play (not while scrubbing, not at 4x)
-  if (caption && P.playing && P.speed < 4 && u > prevU && u - prevU < 45) narrator.say(caption, P.speed > 1 ? 1.35 : 1.02);
+  // the voice reads each caption once, while it plays normally (not while scrubbing or after a jump, not at 4x); a
+  // caption that appeared while paused (the opening line before Start) is read when play begins
+  if (caption && caption.key !== spokenKey && P.playing && P.speed < 4 && !hud.scrubbing && Math.abs(u - prevU) < 45) {
+    spokenKey = caption.key;
+    if (caption.text !== spokenText) narrator.say(caption.text, P.speed > 1 ? 1.35 : 1.02);
+    spokenText = caption.text;
+  }
   sound.update({ run, u, prevU, playing: P.playing, rig, explode: explode.open });
   updateHover();
   renderer.render(scene, camera);
@@ -674,4 +686,6 @@ function fitDistance(r) {
 })();
 
 window.twin = { P, stats, select, seek, setCam, setSpeed, togglePlay, renderer, scene, camera, controls, explode: () => explode,
-  rigs: () => rigs, sound, narrator };
+  rigs: () => rigs, sound, narrator, setSound,
+  // for testing: run n frames of dt seconds straight away (a hidden browser tab barely draws)
+  step: (n, dt = 1 / 30) => { for (let i = 0; i < n; i++) tick(last + dt * 1000); } };
